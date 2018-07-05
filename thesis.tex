@@ -45,16 +45,83 @@
 \usepackage[utf8]{inputenc}% si può scegliere anche latin1, ma lo si sconsiglia fortemente
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
-\usepackage{todonotes}
-%\usepackage[disable]{todonotes}
+
 % Vedere la documentazione italiana o inglese di TOPtesi per le
 % attenzioni che bisogna usare al fine di ottenere un file
 % veramente conforme alle norme per l'archiviabilità.
 
+\usepackage{todonotes}
+%\usepackage[disable]{todonotes}
 \usepackage{url}
 \usepackage{hyperref}
 \usepackage{subfig}
 \usepackage{tabto}
+\newcommand{\citep}[1]{\cite{#1}}%if using textmaker
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{3}
+\usepackage{color}
+\usepackage{listings}
+\usepackage[]{courier}
+\usepackage{tabulary}
+
+\usepackage{dcolumn}
+\usepackage{booktabs}
+
+
+\newcommand\hd[1]{\multicolumn{1}{c}{%
+  \textbf{\begin{tabular}{@{}c@{}}#1\end{tabular}}}}
+
+\let\OldTexttt\texttt
+\renewcommand{\texttt}[1]{{\small\OldTexttt{#1}}}
+
+\lstdefinestyle{customc}{
+  tabsize=4, % tab space width
+  belowcaptionskip=1\baselineskip,
+  showstringspaces=false, % don't mark spaces in strings
+  numbers=left, % display line numbers on the left
+  breaklines=true,
+  frame=tb, % draw a frame at the top and bottom of the code block
+  xleftmargin=\parindent,
+  language=C++,
+  showstringspaces=false,
+  basicstyle=\ttfamily\footnotesize\color{green!70!black},%\scriptsize
+  keywordstyle=\color{blue!70!black},
+  commentstyle=\normalfont\ttfamily\footnotesize\slshape\color{purple!70!black},
+  identifierstyle=\color{black},
+  stringstyle=\color{orange!70!black},
+  numberstyle=\tiny\color{black},
+  rulecolor=\color{black},
+  keywordstyle = [2]{\color{red!70!black}},
+  keywordstyle = [3]{\color{red}},
+  keywordstyle = [4]{\color{teal}},
+  morekeywords = {
+                     QString, 
+                     QStringList, 
+                     QLibrary, 
+                     ZxcvbnFreeInfo_type,
+                     ZxcvbnMatch_type,
+                     ZxcMatch_t
+  },
+  %words already in the package but that we want in other color  
+  deletekeywords = {
+                    typedef,
+                    const,
+                    *
+  },
+  morekeywords = [2]{
+                     typedef,
+                     const,                           
+  },
+  morekeywords = [3]{*},
+%  morekeywords = [3]{<<, >>},
+%  morekeywords = [4]{++},  
+%  
+%  
+%  morekeywords={
+%    QString,
+%    QStringList,
+%  },
+}
 
 \hypersetup{%
     pdfpagemode={UseOutlines},
@@ -70,11 +137,12 @@
 %
 %
 % Per scrivere testo fasullo in "latinorum"
-\usepackage{lipsum}
+%\usepackage{lipsum}
 %
 
 %%%%%%% Definizioni locali
-\newtheorem{osservazione}{Osservazione}% Standard LaTeX
+%\newtheorem{osservazione}{Osservazione}% Standard LaTeX
+
 
 
 \begin{document}
@@ -94,7 +162,7 @@
 \FacoltaDi{Department of control and computer engineering}% lo spazio finale correttamente sparisce
 %\facolta[III]{Department of control and computer engineering}
 \Materia{Embedded Systems}
-\titolo{Passwords wallet using SEcube framework}% per la laurea quinquennale e il dottorato
+\titolo{Password Wallet secured by the SEcube framework}% per la laurea quinquennale e il dottorato
 %\sottotitolo{Metodo dei satelliti medicei}% per la laurea quinquennale e il dottorato
 %
 %%%%%%% Corso degli studi
