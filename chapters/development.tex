@@ -616,7 +616,7 @@ QSqlDatabase dbMem; //The database handler, declared in header
 if(!(QSqlDatabase::isDriverAvailable("QSQLITE")))
   exit (1); //the application does not work without Sqlite
 
-if (dbMem.open()){ 
+if (dbMem.isOpen()){ 
   save_table_geometry;
   dbMem.close();//close any prev. opened database
 }
@@ -690,12 +690,12 @@ foreach (const QString table, tables) { // loop all the tables
     set_values_to_empty;
     finalSql += insert.arg(table).arg(values.join(", "));
   }else{
-  query.prepare(QString("SELECT * FROM [%1]").arg(table));
-  query.exec()
-  while (query.next()){ //row by row
-    values = query_read_row();
-    finalSql += insert.arg(table).arg(values.join(", "));
-  }
+    query.prepare(QString("SELECT * FROM [%1]").arg(table));
+    query.exec()
+    while (query.next()){ //row by row
+      values = query_read_row();
+      finalSql += insert.arg(table).arg(values.join(", "));
+    }
 }
 //single write into secure database, fill the tables
 sqlite3_exec(dbSec, finalSql.toUtf8(), NULL, 0, &zErrMsg);
@@ -709,9 +709,9 @@ One problem found during the open process of a secured in-disk wallet (that will
 This action is very simple, it just clears the current filename (if any), and calls the \texttt{Save\_Wallet} action; as there is no filename, the user is forced to enter a new one. The only point to be careful about is that, in case the \texttt{Save\_Wallet\_As} process is aborted, the previous filename needs to be recovered, so before clearing, the filename is temporary stored in case it is needed.
 
 \subsection{Open Wallet action}
-As for the \texttt{New\_Wallet} action, the first step is to check for unsaved changes and show the dialogue in figure \ref{fig:confSave}
+Similarly to the \texttt{New\_Wallet} action, the first step is to check for unsaved changes and ask the user if save them, discard them or cancel, with the dialogue in figure \ref{fig:confSave}
 
-If the user decides to continue, the dialogues in figure \ref{fig:openWallet} allow them to choose the wallet to open from the list.
+If the user decides to continue, the dialogues in figure \ref{fig:openWallet} allow them to choose from the list the wallet to open.
 
 \begin{figure}[ht]
   \centering
@@ -722,9 +722,87 @@ If the user decides to continue, the dialogues in figure \ref{fig:openWallet} al
  \label{fig:openWallet}
 \end{figure}
 
+The application proceeds doing the inverse process to the \texttt{Save\_action}, that is, read all the tables from the secure in-disk database and create an in-memory database with this data. To do so, the listings in \ref{lis:openWallet} is used. First, the in-disk data base is opened as read only, and a list named \texttt{tables} with the existent tables in it is generated. Then an in-memory database is created. Finally, for each table in \texttt{tables}, its contents are read, a correspondent table is created in the in-memory database, and the later is populated with the read contents from the in-disk DB.
+\begin{lstlisting}[style=customc, float=htb, caption={Simplified Open Wallet action}, label = {lis:openWallet}]
+sqlite3_open_v2(fileName.toUtf8(),
+                &dbSec, 
+                SQLITE_OPEN_READONLY, NULL)); //open in-disk DB
 
-%
-%\subsection{Close Wallet action}
+QString tableNames="SELECT name FROM sqlite_master "
+                    "WHERE type='table' "
+                    "ORDER BY name;";
+sqlite3_exec(
+  dbSec, tableNames.toUtf8(), 
+  callback_createTableList,//builds the 'tables' list 
+  this, &zErrMsg);
+
+if (dbMem.isOpen()){ 
+  save_table_geometry;
+  dbMem.close();//close any prev. opened database
+}
+dbMem = QSqlDatabase::addDatabase("QSQLITE");
+dbMem.setDatabaseName(":memory:");
+dbMem.open();
+query = QSqlQuery(dbMem);
+
+foreach (const QString table, tables){
+  QString sql = "create table "+table+
+                "(id integer primary key, "
+                "Username TEXT, "
+                "Domain TEXT, "
+                "Password TEXT, "
+                "Date TEXT, "
+                "Description TEXT );";
+  if (table!="NoEmpty"){ //Workaround: ignore empty
+    query.prepare(sql);
+    query.exec(); //create table in in-mem DB
+  }
+  QString SqlStatement = 
+    QStringLiteral("SELECT * FROM '%1';").arg(table);
+  sqlite3_exec(
+    dbSec, SqlStatement.toUtf8(), 
+    callback_populateTable, //populates in-mem DB
+    this, &zErrMsg);
+}
+\end{lstlisting}
+
+
+The \texttt{SELECT FROM} statements in \texttt{sqlite3} require the use of a \textsl{callback} function, which is called for every result row, and receive the actual data from the data base as an \texttt{argv[]} argument. In the open process two of these functions are needed, shown in listing \ref{lis:callback}. 
+In \texttt{create\_TableList}, the list \texttt{tables} is build by simply reading the only element in the \texttt{argv[]} array, as each row only consists of a table's name. 
+In \texttt{populatetable}, the table in the in-memory DB is populated, row by row with each call.  In this case the \texttt{argv[]} array holds the values in a single row coming from the in-disk DB.
+
+Finally the GUI is updated, by enabling some elements and disabling others.
+
+\begin{lstlisting}[style=customc, float=htb, caption={Callback functions for Sqlite3 SELECT}, label = {lis:callback}]
+//Build TableList from in-disk DB
+callback_createTableList(int argc, char**argv, char**azColName){ 
+  tables << argv[0]; //only one arg, the table name
+  return 0;
+}
+//fill 'table' in in-mem DB with data from in-disk DB
+callback_populateTable(int argc, char **argv, char **azColName){ 
+  if (table=="NoEmpty") // we dont want NoEmpty in the in-mem db
+    return 0;
+  int i;  
+
+  static const QString insert = 
+    QStringLiteral("INSERT INTO %1 VALUES (%2);");
+  
+  QStringList values;
+  QString aux;
+  for(i = 0; i<argc; i++){//argv holds values from a single row 
+      aux = argv[i];
+      values << "'"+aux+"'"; 
+  }
+  query.prepare(insert.arg(table).arg(values.join(", ")) );
+  query.exec();
+  return 0;
+}
+\end{lstlisting}
+
+
+\subsection{Close Wallet action}
+
 %\subsection{Delete Wallet action}
 %
 %\subsection{Add Table action}

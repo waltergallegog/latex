@@ -25,10 +25,10 @@
 \contentsline {figure}{\numberline {1.11}{\ignorespaces Open Wallet dialogues\relax }}{31}{figure.caption.32}
 \contentsline {subfigure}{\numberline {(a)}{\ignorespaces {User chooses the wallet to open from the list}}}{31}{subfigure.11.1}
 \contentsline {subfigure}{\numberline {(b)}{\ignorespaces {if {\relax \fontsize {11.86258pt}{14.23505pt}\selectfont \abovedisplayskip 11.86203pt plus 2.373pt minus 7.11752pt\abovedisplayshortskip 0.0pt plus 3.55876pt\belowdisplayskip 11.86203pt plus 2.373pt minus 7.11752pt\belowdisplayshortskip 7.11752pt plus 3.55876pt minus 3.55876pt\let \leftmargin \leftmargini \topsep 10.40053pt plus 2.60054pt minus 5.19942pt\parsep 5.19942pt plus 2.60054pt minus 1.29944pt\itemsep \parsep \leftmargin \leftmargini \topsep 5.19942pt plus 2.60054pt minus 2.60054pt\parsep 2.60054pt plus 1.29944pt minus 1.29944pt\itemsep \parsep \texttt {Browse}} is clicked a {\relax \fontsize {11.86258pt}{14.23505pt}\selectfont \abovedisplayskip 11.86203pt plus 2.373pt minus 7.11752pt\abovedisplayshortskip 0.0pt plus 3.55876pt\belowdisplayskip 11.86203pt plus 2.373pt minus 7.11752pt\belowdisplayshortskip 7.11752pt plus 3.55876pt minus 3.55876pt\let \leftmargin \leftmargini \topsep 10.40053pt plus 2.60054pt minus 5.19942pt\parsep 5.19942pt plus 2.60054pt minus 1.29944pt\itemsep \parsep \leftmargin \leftmargini \topsep 5.19942pt plus 2.60054pt minus 2.60054pt\parsep 2.60054pt plus 1.29944pt minus 1.29944pt\itemsep \parsep \texttt {QFileDialog}} is launched}}}{31}{subfigure.11.2}
-\contentsline {figure}{\numberline {1.12}{\ignorespaces PwGen settings in the preference window\relax }}{32}{figure.caption.34}
-\contentsline {figure}{\numberline {1.13}{\ignorespaces zxcvbn general dictionaries configuration\relax }}{37}{figure.caption.42}
-\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Tab dedicated to zxcvbn preferences}}}{37}{subfigure.13.1}
-\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Checkable dialogue to enable dictionaries, appears after clicking the Choose button}}}{37}{subfigure.13.2}
-\contentsline {figure}{\numberline {1.14}{\ignorespaces Crack times for different attacker capabilities\relax }}{40}{figure.caption.48}
-\contentsline {figure}{\numberline {1.15}{\ignorespaces Password broke down by the zxcvbn algorithm\relax }}{40}{figure.caption.49}
-\contentsline {figure}{\numberline {1.16}{\ignorespaces Settings for PassPhrase Generator\relax }}{42}{figure.caption.50}
+\contentsline {figure}{\numberline {1.12}{\ignorespaces PwGen settings in the preference window\relax }}{34}{figure.caption.36}
+\contentsline {figure}{\numberline {1.13}{\ignorespaces zxcvbn general dictionaries configuration\relax }}{39}{figure.caption.44}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Tab dedicated to zxcvbn preferences}}}{39}{subfigure.13.1}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Checkable dialogue to enable dictionaries, appears after clicking the Choose button}}}{39}{subfigure.13.2}
+\contentsline {figure}{\numberline {1.14}{\ignorespaces Crack times for different attacker capabilities\relax }}{42}{figure.caption.50}
+\contentsline {figure}{\numberline {1.15}{\ignorespaces Password broke down by the zxcvbn algorithm\relax }}{43}{figure.caption.51}
+\contentsline {figure}{\numberline {1.16}{\ignorespaces Settings for PassPhrase Generator\relax }}{44}{figure.caption.52}
