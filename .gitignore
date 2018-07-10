@@ -10,8 +10,10 @@ thesis.blg
 thesis.dvi
 thesis.log
 thesis.out
-thesis.pdf
 thesis.run.xml
 thesis.synctex.gz
 thesis.tdo
 thesis.toc
+thesis.lof
+thesis.lol
+thesis.lot
