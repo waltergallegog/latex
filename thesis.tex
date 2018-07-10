@@ -38,7 +38,8 @@
     autoretitolo,
     greek,
     evenboxes,
-%    tipotesi,
+    numerazioneromana,
+    tipotesi=magistrale,
 ]{toptesi}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -50,8 +51,10 @@
 % attenzioni che bisogna usare al fine di ottenere un file
 % veramente conforme alle norme per l'archiviabilità.
 
-\usepackage{todonotes}
-%\usepackage[disable]{todonotes}
+% modifications by Walter Gallego
+
+%\usepackage{todonotes}
+\usepackage[disable]{todonotes}
 \usepackage{url}
 \usepackage{hyperref}
 \usepackage{subfig}
@@ -93,27 +96,67 @@
   rulecolor=\color{black},
   keywordstyle = [2]{\color{red!70!black}},
   keywordstyle = [3]{\color{red}},
-  keywordstyle = [4]{\color{teal}},
+  keywordstyle = [4]{\slshape\color{green!50!black}},
   morekeywords = {
                      QString, 
                      QStringList, 
-                     QLibrary, 
+                     QLibrary,
+                     QComboBox,
+                     QList,
                      ZxcvbnFreeInfo_type,
                      ZxcvbnMatch_type,
-                     ZxcMatch_t
+                     ZxcMatch_t,
+                     L0_discover_init,
+                     L0_discover_next,
+                     se3_disco_it,
+                     se3_session,
+                     se3_device,
+                     LO_open,
+                     L1_login,
+                     memcmp,
+                     QSqlDatabase,
+                     uint16_t,
+                     uint32_t,
+                     sqlite3_exec,
+                     foreach,
+                     QStringLiteral,
+                     sqlite3_open_v2,
+                     QSqlQuery,
+                     sqlite3
   },
   %words already in the package but that we want in other color  
   deletekeywords = {
                     typedef,
                     const,
-                    *
+                    *,
+                    true,
+                    false,
+                    NULL,
+                    null
   },
   morekeywords = [2]{
                      typedef,
-                     const,                           
+                     const,
+                     true,
+                     false,
+                     NULL,
+                     null                           
   },
   morekeywords = [3]{*},
-%  morekeywords = [3]{<<, >>},
+  morekeywords = [4]{
+                    SE3_ERR_ACCESS,
+                    SE3_CMD1_LOGOUT,
+                    SE3_CMD1_LOGOUT_FORCED,
+                    SE3_L1_TOKEN_SIZE,
+                    SE3_CMD1_CHALLENGE,
+                    SE3_OK,
+                    SE3_ERR_PIN,
+                    SE3_ERR_OPENED,
+                    SE3_TIMEOUT,
+                    SE3_ACCESS_USER,
+                    SQLITE_OPEN_CREATE,
+                    SQLITE_OPEN_READWRITE
+  },
 %  morekeywords = [4]{++},  
 %  
 %  
@@ -122,6 +165,8 @@
 %    QStringList,
 %  },
 }
+
+% end modifications by Walter Gallego
 
 \hypersetup{%
     pdfpagemode={UseOutlines},
@@ -162,7 +207,8 @@
 \FacoltaDi{Department of control and computer engineering}% lo spazio finale correttamente sparisce
 %\facolta[III]{Department of control and computer engineering}
 \Materia{Embedded Systems}
-\titolo{Password Wallet secured by the SEcube framework}% per la laurea quinquennale e il dottorato
+%\titolo{Password Wallet secured by the SEcube framework}% per la laurea quinquennale e il dottorato
+\titolo{A Secure Password Wallet based on the SEcube framework}
 %\sottotitolo{Metodo dei satelliti medicei}% per la laurea quinquennale e il dottorato
 %
 %%%%%%% Corso degli studi
@@ -179,8 +225,8 @@
 \candidato{Walter \textsc{Gallego G\'omez}}[s225140]% per tutti i percorsi
 
 %%%%%%% Relatori o supervisori
-\relatore{prof.~Albert Einstein}
-\secondorelatore{dipl.~ing.~Werner von Braun}
+\relatore{Prof.~Paolo Ernesto Prinetto}
+\secondorelatore{Dr.~Giuseppe Airò Farulla}
 %TODO
 \todo{check relatoris}
 
@@ -265,17 +311,13 @@
 %%%%%%% care about the title page in English
 \iflanguage{english}{%
 	\retrofrontespizio{This work is subject to the Creative Commons Licence}
-	\DottoratoIn{PhD Course in\space}
 	\CorsoDiLaureaIn{Master degree course in\space}
-	\NomeMonografia{Bachelor Degree Final Work}
 	\TesiDiLaurea{Master Degree Thesis}
-	\NomeDissertazione{PhD Dissertation}
 	\InName{in}
 	\CandidateName{Candidates}% or Candidate
 	\AdvisorName{Supervisors}% or Supervisor
 	\TutorName{Tutor}
 	\NomeTutoreAziendale{Internship Tutor}
-	\CycleName{cycle}
 	\NomePrimoTomo{First volume}
 	\NomeSecondoTomo{Second Volume}
 	\NomeTerzoTomo{Third Volume}
@@ -293,48 +335,68 @@
 %{
 %\tomo
 %  \paginavuota
-    \begin{dedica}
-        To my mom
-
-        \textdagger\ To the memory of my father
-    \end{dedica}
+%    \begin{dedica}
+%        To my mom
+%
+%        \textdagger\ To the memory of my father
+%    \end{dedica}
 %}
 %{%
    
 %}
 %%%%%%% Fine esperimento
 
+% turns off chapter numbering and uses roman numerals for page numbers
+\frontmatter
+
+% CITAZIONE - PERSONALIZZARE
+% VSPACE - PROPORZIONE USATA PER CENTRATURA VERTICALE DEL TESTO
+% FLUSHRIGHT - ALLINEAMENTO ORIZZONTALE A DESTRA
+
+\begin{flushright}
+\vspace*{30pt}
+\noindent
+{\Large\textit{To my mom}}
+
+{\Large\textit{\textdagger \hspace{1pt} In memory of my father}}
+
+\end{flushright}
 \listoftodos
 
 \sommario
 
-Nowadays, any regular internet user has a large an increasing number of passwords protecting any sort of private information, some of it very sensitive. This is also true for companies, and ensuring the safe storage of said passwords may be of particular importance in a lot of cases. 
-Given the tools and means hackers have access thanks to the computational power provided by today's technology, a software based protection may not be enough for some users, as it is not entirely unbreakable, specially if the person or organization is a specific target of the attack.
+Nowadays, having a large quantity of digital passwords is the norm, and as their number increases, it becomes impossible to memorize all of them, specially in the case of strong passwords which are very long and/or very random, and therefore hard to remember. These has led users to relay on software applications to save their passwords, the most common cases being web browsers and password wallets. The drawback of this approach is that security may be compromised, since all the passwords are stored in the same place an attacker could gain access to them. For users particularly interested in ensuring the security of their systems, this software based approach may not be acceptable. This work presents an alternative solution based on the SEcube™ framework that guarantees the security of the stored passwords.
 
-This work presents an alternative solution, relying on the tools provided by the \textbf{SEcube} technology. With SEcube, we can encrypt any data using state of the art ad-hoc functions and hardware keys. 
+The SEcube™ (Secure Environment cube) framework consist of an open source security-oriented hardware platform designed by the Blu5 Group, and a set of open source software libraries developed by European research institutions. The core of the framework is the SEcube chip, which integrates three key security elements in a single package: A fast floating-point Cortex-M4 CPU, a high-performance FPGA and an EAL5+ certified Security Controller (Smart Card). This elements, in conjunction with the software libraries allows developers with little to no knowledge in information security to implement of highly reliable security applications.
 
-%TODO 
-\todo{complete intro}
+The desktop application developed in this work, named \textbf{SEcubeWallet}, was written in C/C++ and Qt. The application runs in a computer, denominated host, and the SEcube chip, known as device has to be connected to it via USB. The host request for security operations to the device, using the SEcube software libraries. Each device has a hard written master password, and in order to use it, it is necessary to perform an authentication procedure entering said password from the host.
 
-The developed application, \textbf{SEcubeWallet}, runs in \textbf{Qt}, and presents the user a pleasant and intuitive graphical interface. From it, the user can create, delete, open, and modify password wallets. The wallets are managed as a table in a SQLite database file, and this file is encrypted using the SEcube device. Only the encrypted version of the file is saved on the hard disk, and the wallet can be later opened only when the same SEcube device is connected to the computer, and introducing a master password to increase security. 
+The wallets are managed using SecureSQlite, one of the SEcube libraries, which wraps the functionalities of the SQlite standard to create SEcube secured databases. In short, the data of interest is encrypted using the SEcube device and it is stored as a file in the host. This encrypted file can only be decrypted if the SEcube device is connected and if the user authenticates using the master password. 
+As the core operations are performed by the device, not by the host, the encryption/decryption can be done in any computer where an appropriate version of Qt is installed and the device is connected.
 
-Some additional features of the application are the ability to realistically check passwords strength using the \textbf{zxcvbn} dropbox 2012 hackweek project, allow multiple users to create separate wallets with the same SEcube device, and the possibility to open on a web browser the domain corresponding to any of the saved passwords.
+As front end, the application presents the user a pleasant and intuitive graphical user interface. With it, the user can easily create, delete, open, and modify password wallets. The GUI is configurable and as it runs in Qt is cross-platform.
+Additionally, the application allows the user to generate passwords using the PwGen library, and passphrases using an ad hoc developed function. This, together with the possibility to realistically check the entropy of the generated pins using the zxcvbn dropbox library, encourages the users to secure their systems with strong passwords/passphrases.
+
+In conclusion, SEcubWallet is an excellent application for the storing and management of passwords. As it relays on the SEcube framework it is trustworthy and the information is virtually impossible to steal. Thanks to the developed GUI it is easy to use, and it offers some interesting functionalities to increase the user experience.
 
 
-In the following sections, first we do a brief review of the main platforms used: \textbf{SECube Open security Platform} and \textbf{Qt}, and of the \textbf{zxcvbn} project (with information taken from the official documentation). Then we present a detailed description of the implementation. Finally we list the possible improvements and ideas for future development.
 % \paginavuota % funziona anche senza specificare l'opzione classica
 
-\ringraziamenti
+%\ringraziamenti
 
-The author thanks profusely dot. Giussepe..
+%The author thanks profusely %Dr. Giussepe..
 %TODO
 \todo{check acknowl}
 
 \indici
 
+\listoffigures
+\listoftables
+\lstlistoflistings
+
 \mainmatter
 
-\input{./chapters/introduction}
+%\input{./chapters/introduction}
 
 \input{./chapters/development}
 

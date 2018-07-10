@@ -1,7 +1,8 @@
 \chapter{Application Development}
 
-\section{Requirements (and Specifications)}
-
+%\section{Requirements (and Specifications)}
+%TODO
+\todo{req and spec}
 
 \section{Useful concepts definition}
 
@@ -9,7 +10,7 @@ More detailed explanations of the following concepts will be given later on, but
 
 \subsection{Wallet} A password wallet is a digital form of securely keeping passwords and some meta information. In this work, a Wallet is stored as a Sqlite DataBase. A wallet can have as many tables as the user wants. For instance an user could have a table for storing social media passwords, another one for work-related passwords and a last one for credit cards and bank accounts passwords. Finally, Each table has a set of defined fields (Username, Domain, Password, Date, Description).
 
-\subsection{SEcube} SEcube is a custom chip produced by the Blu5 group \cite{Blu5} that integrates a ARM CPU, and FPGA and a SmartCard. The chip is specifically designed for security purposes, allowing developers to implement encryption/decryption functions that are executed fast and are guaranteed to be reliable. The chip can be connected to a PC by USB, Ethernet etc...., so an application running on the PC can use the SEcube to encrypt/decrypt some date.
+\subsection{SEcube} SEcube is a custom chip produced by the Blu5 group \cite{Blu5} that integrates an ARM CPU, a FPGA and a SmartCard. The chip is specifically designed for security purposes, allowing developers to implement encryption/decryption functions that are executed fast and are guaranteed to be reliable. The chip can be connected to a PC by USB, Ethernet etc...., so an application running on the PC can use the SEcube to encrypt/decrypt some date.
 
 \subsection{SEcube SDK} The SEcube Open SDK is a set of open libraries designed to make the development of applications using SEcube more convenient. There are two types of Libraries: Host side (PC) and device side (SEcube) libraries. In general host side functions make requests to device side functions and wait for their response. Moreover, Libraries are divided in four and two hierarchical levels of abstraction, for host and device side respectively. Level0 and Level1 are the lowest levels and are present in both host and device. L0 provides the communication protocols while L1 provides basic security APIs.
 
@@ -48,7 +49,7 @@ SecureSqlite allows to create/edit/save/open databases that when written to the 
 We can see in the diagram the SEcubeWallet application using SecureSqlite to read/write the encrypted wallet stored in disk.
 
 \subsection{Sqlite3}
-Because the use of SecureSqlite involves a call to the SEcube, a regular Sqlite3 DB is also used, but this DB is never saved to the disk. Sqlite3 allows for the creation of an In-Memory DB, i.e. a DB whose content is always in the memory space of the application an therefore secure by the operating system. 
+Because the use of SecureSqlite involves a call to the SEcube, a regular Sqlite3 DB is also used, but this DB is never saved to the disk. Sqlite3 allows for the creation of an In-Memory DB, i.e. a DB whose content is always in the application's memory space and is therefore secured by the operating system. 
 
 The In-memory DB is used for editing. When the user want to save the wallet, i.e. write it to the disk, the contents of the In-Memory DB are dumped to the encrypted SecureSqlite DB. When the user opens a wallet from the disk, the reverse process occurs.
 
@@ -455,17 +456,402 @@ The PassPhrase generator developed by the author works by randomly picking out w
 %TODO
 \todo{subdirs structue in qt project}
 
+In the following sections each of the elements and functionalities of the application will be explained, how they were implemented, some interesting pieces of code and examples of use.
+
+\subsection{User authentication}
+
+When the user starts the application, the first window to appear is the Login Dialogue, shown in figure \ref{fig:logina}. In it the user is asked to enter the login pin and by clicking accept the Challenge-Based Authentication process between the SEcubeWallet application and the SEcube chip starts. If the authentication fails because the entered pin is wrong, the message in \ref{fig:loginb} is shown. If it fails because there was already an opened session, the confirmation dialogue shown in \ref{fig:loginc} appears. If the authentication is completed successfully the user is granted access to the main window.
+
+\begin{figure}[ht]
+  \centering
+  \subfloat[Login Dialogue\label{fig:logina}]
+  {\includegraphics[width=0.3\linewidth]{chapters/figures/development/login.png}}
+  {}
+  \subfloat[Wrong Password\label{fig:loginb}]
+  {\includegraphics[width=0.3\textwidth]{chapters/figures/development/loginWrong.png}}
+  {}
+  \subfloat[Already an open session\label{fig:loginc}]
+  {\includegraphics[width=0.3\textwidth]{chapters/figures/development/loginOpen.png}}
+  \caption{Login Dialogue and possible outcomes}
+ \label{fig:login}
+\end{figure}
+
+The authentication process begins with the discovery of SEcube devices connected to the PC. This is achieved using Level0 APIs as seen in the listing \ref{lis:dis}. Each discovered device is added to the \texttt{QComboBox} displayed in the login dialogue and to a \texttt{QList}.
+
+\begin{lstlisting}[style=customc, float=htb, caption={Connected Devices discovery}, label = {lis:dis}]
+//// *** variables declaration ***
+se3_disco_it it;
+QList<se3_disco_it> device_found;
+QComboBox* chooseDevice;
+bool found = true;
+
+//*** Refresh button slot *****
+L0_discover_init(&it); //initialize iterator
+while((found = L0_discover_next(&it))){ //move to next device
+  chooseDevice->addItem(QString::fromLocal8Bit(
+    it.device_info.path, -1)); //add to GUI
+  device_found.push_back(it); //add to QList
+}
+\end{lstlisting}
+
+The user then selects one of the discovered devices using the \texttt{QComboBox}, enters their login pin and clicks accept. This triggers the listing \ref{lis:login}. The first step is to open the device communication using the Level0 function \texttt{L0\_open}. Then \texttt{L1\_login} starts the actual challenged based authentication using the login pin entered by the user. Using this type of authentication ensures the login pin is never communicated between the devices and stolen with a physical attack on the USB cable. Rather, a random number is generated in the host and transmitted to the device. The login pin is then used in both the host and the device to encrypt this random number using a \texttt{pbkdf2} function. The resulting key on the device is sent to the host, who compares it with its own key. If they are the same it means the login pin entered by the user is equal to the login pin stored in the device, and the only information transmitted are random numbers that an attacker cannot understand. (The actual authentication procedure implemented is a little bit more complex, but is based on the same idea described here).
+%TODO
+\todo{explain better the challenge based}
+
+\begin{lstlisting}[style=customc, float=htb, caption={Open device and try to login}, label = {lis:login}]
+// *** variables declaration ***
+//use selected index at QComboBox to retrieve 'it' from QList.
+int device_index = chooseDevice->currentIndex();
+se3_disco_it it = device_found.at(device_index);
+
+se3_session s; 
+se3_device dev;
+int ret;
+bool logout = false; //if true, L1_login logs out first
+
+//*** Accept button slot *****
+if(!dev.opened) // open communication with device
+  if((L0_open(&dev, &(it.device_info), SE3_TIMEOUT))!= SE3_OK)
+    exit(1); //error
+
+ret = L1_login(&s, &dev, pin, SE3_ACCESS_USER, logout); //login
+
+if (ret != SE3_OK){    //error at login
+  if (ret == SE3_ERR_PIN) //The password is wrong
+    show_wrong_pass_messsage;
+    
+  else if (ret == SE3_ERR_OPENED){
+    // there is already an opened session, ask user if he wants to close it
+    if(confirmation_dialog_reply == Yes){ 
+      logout = true; 
+      call_this_function_again;
+      //next time L1_login will close the existing session
+    }
+  }else            
+    exit(1);//other error
+}else
+  accept();//All ok, go to main window
+\end{lstlisting}
+
+After both device and host have the same key, it is used to encrypt the communication channel. A token is generated in the device and transmitted on the encrypted channel to the host. This token is a random number, and is used from that point on to validate any communication between host and device. The SEcubeChip does not accept any command from the host if the token it sends is not the correct one. The only command accepted without a token is off course, login. In the logout procedure, this token is cleared (set to zeros), so a login later on is possible.
+
+One problem found during the development of the application is the followin: If after login in, the SEcubeWallet application crashes, the logout command, that is usually issued when closing, is never executed, and the device remains with an active token value. Therefore, when the user launches the application again, the login will fail, because the device expects a token value from the host. To solve this issue a few options were considered:
+
+\begin{itemize}
+\setlength\itemsep{0pt}
+\item Make sure the application never crashes. Because software applications are rarely completely bug-free, and even if they are, an external problem like a bug in the OS can make them crash, this option is not feasible. 
+\item Make sure the logout command is issued even in the case the application crashes. This option sounded promising, and a two-process idea was even developed. Process 1 is only in charge of calling Process 2, in which the actual application was executed. if Process 2 crashes, Process 1 remains alive and performs the logout procedure. To make this work, shared memory was used to communicate the session variable (were the token is stored), so both processes could send commands to the device. The idea was latter on dropped because of two main reasons: First of all, it did not solve the case were the problem is external (OS bug), secondly, it was too complicated because of the sharing memory mechanism (The session variable is a fairly complex structure, with a lot of pointers), and because the token was being shared by two processes, this could open another possibility of attacks.
+\item As the two previous ideas failed, it was decided that a small modification to the login behaviour on the SEcube firmware was necessary. The modification consist on letting the login function clear the token field if necessary. This does not compromise the security of the system because access to the chip is only granted if the login pin entered by the user is the right one. One concern that may rise is that, while an application is using the SEcube, another one could close the session by issuing a Login command, but this is not possible because the \texttt{L0\_open} function only allows one process to communicate with the chip at a time, using a file locker in the .se3magic
+file saved in the SEcube SDcard.
+\end{itemize} 
+
+The new behaviour is implemented in listings \ref{lis:se3cmd1}.
+If after a crash the session in the SEcube remains open, and the host tries to login again, the SEcube returns the new error code \texttt{SE3\_ERR\_OPENED}. The host then can decide if it wants to force the SEcube to close the opened session so it can login, with the new command \texttt{SE3\_CMD1\_LOGOUT\_FORCED}, which forces a logout without checking the token. After this command the host can login as usual. This steps are included in the host side \texttt{L1\_login} function, which now has an additional parameter to control whether to force a logout or not. This parameter is the one used in listings \ref{lis:login}, set to true when the user clicks \textsc{yes} in the confirmation dialogue asking whether or not to close the previous session.
+
+\begin{lstlisting}[style=customc, float=htb, caption={Modification in SEcubeFirmware, file se3\_cmd1.c}, label = {lis:se3cmd1}]
+if (se3c1.login.y) { // if there is already an opened session
+  if (memcmp(se3c1.login.token, req_params.token, SE3_L1_TOKEN_SIZE)) { //and token mismatch
+    if (req_params.cmd==SE3_CMD1_CHALLENGE)//someone (maybe same user after a crash) trying to login.
+      return SE3_ERR_OPENED;//notify host there is already an opened session, if host wants to continue, it will call SE3_CMD1_LOGOUT_FORCED
+    else if (req_params.cmd==SE3_CMD1_LOGOUT_FORCED)//if the user agreed to close the existing session by forcing a logout
+      req_params.cmd=SE3_CMD1_LOGOUT;//call logout as usual  
+    else
+      return SE3_ERR_ACCESS;
+  }
+}
+\end{lstlisting}
+
+
+
+
+\subsection{Main Window}
+
+The SEcubeWallet GUI's main window developed using Qt is shown in figure \ref{fig:mainWindow}.
+
+\begin{figure}[htb]
+  \centering
+  \captionsetup{justification=centering}
+  \centerline{\includegraphics[width=1.2\columnwidth]{chapters/figures/development/mainWindow.png}}
+  \caption{SEcubeWallet main window}
+  \label{fig:mainWindow}
+\end{figure}
+
+The main window is composed of the following elements:
+
+\begin{itemize}
+\setlength\itemsep{0pt}
+\item \textbf{Table View:} Used for displaying the wallet entries. It resizes smoothly with the window, can be ordered by any of the columns, and the passwords are hidden by default but can be shown if the user wants to.
+\item \textbf{Filters:} The user can search in each of the table's columns using filters. These filters are implemented inside a separate container, but they resize together with the table.
+\item \textbf{Entries Tool Bar:} It is positioned to the left of the table. It has the actions: add/edit/delete entries, show passwords, fit table, change date filter, launch domain and select table.
+\item \textbf{Tables Tool Bar:} It is positioned to the top right of the table. It has the actions: add/rename/delete table.
+\item \textbf{Wallets Tool Bar:} It is positioned to the top left of the table. It has the actions: new/open/delete/save/save as/close Wallet. 
+All of the above Tool Bars are movable.
+\item \textbf{Menu Bar:} It is positioned at the top of the window. It contains all the previous actions, plus preferences and help.
+\item \textbf{Status Bar:} Positioned at the bottom of the window, it is used to display some success/error messages to the user and the current wallet name.
+\end{itemize}
+
+
+\subsection{Preferences Subwindow}
+\subsection{Help Subwindow}
+
+\subsection{New Wallet action}
+
+When the user triggers the the \texttt{New\_Wallet} action, the first step to execute is to check if there is another wallet opened and if it has unsaved changes. If, so the confirmation dialogue in figure \ref{fig:confSave} is shown, so the user can decide whether to save the changes, discard them, or cancel the creation of a new wallet.
+\begin{figure}[htb]
+  \centering
+  \captionsetup{justification=centering}
+  \centerline{\includegraphics[width=0.6\columnwidth]{chapters/figures/development/confSave.png}}
+  \caption{Save Confirmation dialogue}
+  \label{fig:confSave}
+\end{figure}
+
+In case the user clicks \texttt{Save}, the \texttt{Save\_Wallet} action is triggered before continuing. \texttt{Discard} continues without saving, and \texttt{Cancel} returns without doing anything.
+
+If the process continues, the next step is to close any previous in-memory database handlers, save the \texttt{table\_view} geometry (if any), and open a new in-memory database using the Qt class \texttt{QSqlDatabase}, as seen in listings \ref{lis:newDB}.
+
+\begin{lstlisting}[style=customc, float=htb, caption={New in memory database}, label = {lis:newDB}]
+QSqlDatabase dbMem; //The database handler, declared in header 
+
+//Check if sqlite is installed on OS
+if(!(QSqlDatabase::isDriverAvailable("QSQLITE")))
+  exit (1); //the application does not work without Sqlite
+
+if (dbMem.open()){ 
+  save_table_geometry;
+  dbMem.close();//close any prev. opened database
+}
+
+dbMem = QSqlDatabase::addDatabase("QSQLITE");
+dbMem.setDatabaseName(":memory:"); // in-memory database
+if(!dbMem.open()){
+  return;//Error opening, do nothing
+}
+\end{lstlisting}
+
+As explained before the in-memory data base is used for editing. It has the advantage of being fast because there is no access to the hard disk, and secure, because all the data is in the application memory space, and therefore is protected by the OS.
+
+The last step is to update the GUI state, by enabling some action like \texttt{Add\_Table} and \texttt{Save\_Wallet}, and disabling others, like \texttt{Delete\_Table} and \texttt{Rename\_Table}.
+
+\subsection{Save Wallet action}
+To write the wallet contents to the disk, it is necessary to have a filename, so the first step is to check if the user already entered one (from previous saves). If not, with the dialogues in figure \ref{fig:saveWallet} the user can choose the directory and the filename to save.
+
+\begin{figure}[ht]
+  \centering
+  \subfloat[User can enter a New name. Current wallets are displayed\label{fig:saveWalleta}]{\includegraphics[width=0.48\textwidth]{chapters/figures/development/saveWallet.png}}
+  {}
+  \subfloat[if \texttt{Browse} is clicked a \texttt{QFileDialog} is launched\label{}]{\includegraphics[width=0.48\textwidth]{chapters/figures/development/directories.png}}
+  \caption{Save Wallet dialogues}
+ \label{fig:saveWallet}
+\end{figure}
+
+The need for two dialogues instead of a regular file browser comes from the fact that the chosen filename will not be readable from the OS, since \texttt{SEfile} also encrypts it. Similarly, wallets already saved in the directory cannot be displayed with a regular file browser, so it is necessary to use the \texttt{SEfile} function \texttt{secure\_ls} and display its output in the list seen in figure \ref{fig:saveWalleta}. The declaration of this function is in listings \ref{lis:securels}. To chose the working directory, it is enough to use the \texttt{QFileDialog} class. If the user wishes they chose an existing filename and can overwrite the correspondent wallet.
+
+\begin{lstlisting}[style=customc, float=htb, caption={\texttt{secure\_ls} declaration}, label = {lis:securels}]
+ /* This function identifies which encrypted files and encrypted directories are present in the directory pointed by path and writes them in list. It only recognizes the ones encrypted with the current environmental parameters.*/
+ 
+uint16_t secure_ls(    //returns 0 in case of success
+  char *path,          //[in]Path to the directory to browse
+  char *list,          //[out]Allocated array to store filenames
+  uint32_t *list_length//[out]Num of char written in list
+);
+\end{lstlisting}
+
+
+After having a filename the next step is to read all of the tables in the current in-memory database, row by row. For each row a \texttt{sqlite} statement of the form \texttt{INSERT INTO table VALUES(user, dom, pass, date, desc)} is created. All of them are merge into a single statement which is executed into the secured in-disk database. This ensures only one access to the SEcube and disk. This process is somewhat slow and the GUI is disabled while it is performed. A simplified version of the code is shown in listing \ref{lis:save} 
+
+\begin{lstlisting}[style=customc, float=htb, caption={simplified Save process}, label = {lis:save}, escapechar=¬]
+sqlite3 *dbSec;    //Secure database declaration, in header
+QSqlDatabase dbMem;//The database handler, declared in header 
+QSqlQuery query;   //To exec sqlite statements, dec. in header
+
+//Create Sqlite DB, with filename specified by user If SEcube is connected, the resulting file is encry.
+sqlite3_open_v2 (fileName.toUtf8(),   
+                &dbSec, 
+                SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE , 
+                NULL) 
+                
+QString finalSql; //To Merge all the sqlite statements.
+static const QString insert = 
+  QStringLiteral("INSERT INTO '%1' VALUES(%2);"); //statement
+  
+dbMem.tables(QSql::Tables); //list of the tables in in-memory DB
+tables.prepend("NoEmpty");  //Workaround: prepend Empty table   ¬\label{line:empty}¬
+foreach (const QString table, tables) { // loop all the tables
+   QString sql = "create table "+table+ //Create table statement 
+                "(id integer primary key, "
+                "Username TEXT, "
+                "Domain TEXT, "
+                "Password TEXT, "
+                "Date TEXT, "
+                "Description TEXT );" ; 
+  sqlite3_exec(dbSec, sql.toUtf8(), NULL, 0, &zErrMsg);// exec
+  
+  if (table=="NoEmpty"){//just an empty table
+    set_values_to_empty;
+    finalSql += insert.arg(table).arg(values.join(", "));
+  }else{
+  query.prepare(QString("SELECT * FROM [%1]").arg(table));
+  query.exec()
+  while (query.next()){ //row by row
+    values = query_read_row();
+    finalSql += insert.arg(table).arg(values.join(", "));
+  }
+}
+//single write into secure database, fill the tables
+sqlite3_exec(dbSec, finalSql.toUtf8(), NULL, 0, &zErrMsg);
+\end{lstlisting}
+
+One problem found during the open process of a secured in-disk wallet (that will be explained latter on) is that the first table is always corrupt and gives the error: \texttt{database disk image is malformed}. The error only occurs when using the SEcube version of the sqlite library. Because it was impossible to find the origin of the error, it was decided to use a workaround: In the save wallet process, an empty table is inserted at the beginning of the in disk database (see line \ref{line:empty} in listings \ref{lis:save}). When opening the wallets, the empty table is simply ignored. With this, the real tables are always correctly read an the application works as intended.
+
+
+\subsection{Save Wallet As action}
+
+This action is very simple, it just clears the current filename (if any), and calls the \texttt{Save\_Wallet} action; as there is no filename, the user is forced to enter a new one. The only point to be careful about is that, in case the \texttt{Save\_Wallet\_As} process is aborted, the previous filename needs to be recovered, so before clearing, the filename is temporary stored in case it is needed.
+
+\subsection{Open Wallet action}
+As for the \texttt{New\_Wallet} action, the first step is to check for unsaved changes and show the dialogue in figure \ref{fig:confSave}
+
+If the user decides to continue, the dialogues in figure \ref{fig:openWallet} allow them to choose the wallet to open from the list.
+
+\begin{figure}[ht]
+  \centering
+  \subfloat[User chooses the wallet to open from the list\label{}]{\includegraphics[width=0.48\textwidth]{chapters/figures/development/openWallet.png}}
+  {}
+  \subfloat[if \texttt{Browse} is clicked a \texttt{QFileDialog} is launched\label{}]{\includegraphics[width=0.48\textwidth]{chapters/figures/development/directories.png}}
+  \caption{Open Wallet dialogues}
+ \label{fig:openWallet}
+\end{figure}
+
+
+%
+%\subsection{Close Wallet action}
+%\subsection{Delete Wallet action}
+%
+%\subsection{Add Table action}
+%\subsection{Delete Table action}
+%\subsection{Rename Table action}
+%
+%\subsection{Table View widget}
+%\subsection{Filters}
+%
+%\subsection{Select Table}
+%\subsection{Add Entry action}
+%\subsection{Edit Entry action}
+%\subsection{Delete Entry action}
+%\subsection{Show Passwords action}
+%\subsection{Fit Table action}
+%\subsection{Change Date Filter type action}
+%\subsection{Launch Domain action}
+%
+%\subsubsection{Status Bar}
+
+
+
+
+
+
+
+
 
 \subsection{PwGen: Pronounceable Password Generator}
 As seen from previous sections, the PwGen program is open source and available in the official Linux repositories. A very simple way of including its functionalities into the SEcubeWallet application would be to use a \texttt{Qprocess} to call PwGen as an external program. Although is tempting to use this solution because of its simplicity, there are three drawbacks with this approach:
 
 \begin{enumerate}
-\item It would require for the user to install the PwGen program, as it is usually not installed in common Linux distributions.
-\item It would not be very portable, because even if there is a PwGen version for windows, the input parameters could change.
-\item Security could be compromised. As PwGen needs to communicate the generated password back to the SEcubeWallet application, an attacker could stole the password in this process.
+\item It would require for the user to install the PwGen program, as it is usually not included in common Linux distributions.
+\item It would not be very portable, because even if there is a PwGen version for windows, the available version or input parameters could differ in different platforms.
+\item Security could be compromised. As PwGen needs to communicate the generated password back to the SEcubeWallet application, an attacker could steal the password in this process.
 \end{enumerate}
 
-For these reasons, it was decided to embed the PwGen sources directly into the application. To do so the main C file was slightly modified and a Qt project was created ...
+For these reasons, it was decided to embed the PwGen sources directly into the application, this ensure the password never leaves the application memory space. 
+To include the sources into the application, some slight modifications (mostly simplifications) to the PWGen \texttt{main()} function were necessary. This is because the original sources are intended for the use of PwGen as a independent console program called by users, so the \texttt{main()} contains code dedicated to parse the input arguments in the standard \texttt{argc argv[]} fashion. Only the \texttt{pwgen.c} and \texttt{pwgen.h} --- files where the \texttt{main()} is implemented --- were modified.
+
+\subsubsection*{Options GUI}
+As all the options for PwGen besides the password length are yes or no questions, the checkable list shown in figure \ref{fig:pwgenSett} is perfect for this purpose.
+
+\begin{figure}[htb]
+  \centering
+  \captionsetup{justification=centering}
+  \includegraphics[width=0.8\columnwidth]{chapters/figures/development/pwgenSett}
+  \caption{PwGen settings in the preference window}
+  \label{fig:pwgenSett}
+\end{figure}
+
+When the \texttt{OK} button is clicked, all the values are saved using the \texttt{QSettings} class, so they are available even after restarting the application.
+
+\subsubsection*{Usage}
+
+When the \texttt{Generate Password} button in the \texttt{AddEntry} class is clicked, the settings values stored in with the \texttt{QSettings} class are read and from them a \texttt{char[]} with the PwGen options syntax is built. Before calling the Generator, it is necessary to allocate a memory space equal to the desired password length (in \texttt{char}) and pass this buffer as a pointer (\texttt{char*}) to PwGen. PwGen will write the generated password in this space. This steps can be seen in the listing \ref{lis:pwgen}
+
+
+\begin{lstlisting}[style=customc, float=htb, caption={PwGen call inside AddEntry}, label = {lis:pwgen}]
+//read user settings (if existent)
+if (settings.value("passGens/pwgen/1cap").toBool())
+    options.append("c");
+if (settings.value("passGens/pwgen/1num").toBool())
+    options.append("n");
+if (settings.value("passGens/pwgen/1spec").toBool())
+    options.append("y");
+if (settings.value("passGens/pwgen/noAmb").toBool())
+    options.append("B");
+if (settings.value("passGens/pwgen/noCap").toBool())
+    options.append("A");
+if (settings.value("passGens/pwgen/noNum").toBool())
+    options.append("0");
+if (settings.value("passGens/pwgen/noVow").toBool())
+    options.append("v");
+if (settings.value("passGens/pwgen/random").toBool())
+    options.append("s");
+
+//check if user entered an integer, if not, default is 16
+if(settings.value("passGens/pwgen/len").toInt())
+    length = settings.value("passGens/pwgen/len").toInt();
+
+//allocate space for password
+buf = (char*)malloc(length+1);
+if(!buf){
+  return;//error, could not allocate
+}
+//actual call to password generator
+main_pwgen(
+  options.length(),               //int, number of options 
+  options.toLatin1().constData(), //char *, options 
+  length,                         //password length 
+  buf                             //char *, to return the password           
+);
+genPass = QString::fromLatin1(buf,length);
+free(buf);
+\end{lstlisting}
+
+\subsubsection*{Results}
+
+A few examples of the resulting Passwords are show in table \ref{tab:pwgenExm}, with their respective zxcvbn Log entropy score and Level. As expected, the passwords with highest entropy are those obtained using the \texttt{-s} (Random) and \texttt{-sy} (Random and especial characters) options. Even with only 6 characters it is possible to get a Level 4 password like \texttt{TBw4)9}. The drawback is, they are hard to remember and type. 
+
+On the contrary, a password obtained with the \texttt{-BA0} (No ambiguous, do not capitalize, no numbers, pronounceable) options, like \texttt{nofosootei}, only reaches a Level2, but it is very easy to remember and type.
+
+The large number of options PwGen offers, together with the PassPhrase generator and the l33t converter, give the users a lot of types of passwords, each suited for different situations, given SEcubeWallet great flexibility.
+
+\begin{table}[ht]
+\renewcommand{\arraystretch}{1.3}
+\centering
+\caption{A few PwGen generated passwords}
+\begin{tabular*}{\columnwidth}{
+@{\extracolsep{\fill}}
+m{4cm}ccc
+@{}}
+\toprule
+\hd{Password} & \hd{Length} & \hd{Options} & \hd{Log Entropy \\ \& Level}  \\ \midrule
+
+iesohGhai3   & 10 & -   &  9.75 (Level 3)\\
+ees0cooLo2   & 10 & -   & 10.47 (Level 4)\\
+dX042wKqlW   & 10 & s   & 17.86 (Level 4)\\
+@!,Q*l5\}+H  & 10 & ys  & 18.15 (Level 4)\\
+TBw4)9       &  6 & ys  & 11.62 (Level 4)\\
+B7t34Lck     &  8 & v   & 11.87 (Level 4)\\
+nofosootei   & 10 & BA0 &  6.50 (Level 2)\\
+\bottomrule  
+\end{tabular*}
+\label{tab:pwgenExm}
+\end{table}
 
 \subsection{zxcvbn Password strength estimator}
 
@@ -482,7 +868,7 @@ The original zxcvbn project, developed in CoffeeScript became so popular it was 
 
 Besides source files, zxcvbn also needs to compile the dictionary files, but first lets define what is a dictionary, why are they important and why they need to be compiled (For general dictionaries only. User dictionaries are small and can be added at runtime).
 
-\subsubsection{General dictionaries}
+\subsubsection*{General dictionaries}
 
 Dictionaries are a crucial part of the algorithm, because they are used estimate the security level of a password according to how common the used words (if any) are. A password containing words present in any of the dictionaries will be easier to crack as hackers will probably try out those specific words or a combination of them.
 
@@ -503,11 +889,11 @@ General dictionaries contain a large number of words that are useful for all use
 As the dictionary files in plain text are pretty large, the algorithm does not read from them directly. Instead, a \texttt{DicNodes} array is generated, using the tool \texttt{dict-generate}, and this array is compiled into the source code.
 To add their own dictionaries, the users need to make sure they are saved as plain-text, (.txt UTF-8), and stored into the zxcvbn directory. The files must have one word per line, with the first word being the most common one. So for instance, in the English dictionary the first word is \texttt{the} and the last one is \texttt{surma}. This is important as it is used to calculate the entropy of the passwords. A password containing the word \texttt{surma} is far more secure that one containing the word \texttt{the}.
 
-\subsubsection{Static Library vs Shared Library}
+\subsubsection*{Static Library vs Shared Library}
 
 Because the dictionaries are transformed into a source file and then compiled together with the main program, it is not possible to add, remove or modify dictionary files after the sources are compiled. Therefore the zxcvbn library can not be embedded into the SEcubeWallet application as a static library (or using the C sources directly), but rather, a \textbf{shared library} approach was followed, which allows the dynamic unload/update/load of the library. This has some performance penalties over static libraries, but it is the only way to give the users the possibility of customize the dictionaries as they please.
 
-\subsubsection{Compilation process}
+\subsubsection*{Compilation process}
 
 The steps performed by the \texttt{makefile} in order to compile the dictionaries and sources are:
 
@@ -529,12 +915,12 @@ The compilation process can be started by the user from the preference window, w
  \label{fig:zxcvbnGen}
 \end{figure}
 
-\subsubsection{Library dynamic loading}
+\subsubsection*{Dynamic Library loading}
 
 To manage the zxcvbn shared library at runtime it is possible to use the qt class \texttt{Qlibrary}, which provides access to the functionality in the library in a platform independent way. To use it, is necessary to pass as argument to the constructor the path to the library. Then load it and resolve the desired functions. If no errors are found, the functions can be used as usual. Finally unload the library when it is not needed any more. See Listing \ref{lis:qlibrary}.
 
 
-\begin{lstlisting}[style=customc, float=htb, caption={Qlibrary basic usage}, label = {lis:qlibrary:}]
+\begin{lstlisting}[style=customc, float=htb, caption={Qlibrary basic usage}, label = {lis:qlibrary}]
 
 /***** In header file *****/
 //Main zxcvbn function type
@@ -570,13 +956,13 @@ free(zxcvbnLib);
 \end{lstlisting}
 
 
-\subsubsection{User Dictionaries}
+\subsubsection*{User Dictionaries}
 
 The user dictionary contain words that are relevant only to a specific user. For example, if the application is used to increase the strength level of passwords used by employees in a company, adding the company's name to the dictionary is a good idea. Furthermore, if the company works in the automotive business, related words as motor, aerodynamic, wheels etc. should be added. By adding those words to the user dictionary, the strength level of passwords using them will decrease, and so the user will be encouraged to never use words that are too easy to guess. The key to a good password is in its randomness. When a hacker is trying to crack one, they will for sure try words relevant to the target.
 
 From the GUI the user can add words manually, or can load them from a text file, but as the words are saved as a simple array, the text file size should not be too large. For large files, it is better to add them as General dictionaries.
 
-\subsubsection{Estimator Usage}
+\subsubsection*{Estimator Usage}
 
 After the library is loaded and the functions resolved, to use the estimator one simply needs to call the main function \texttt{ZxcvbnMatch} whose declaration we see in Listing \ref{lis:zxcvbn} 
 
@@ -592,7 +978,8 @@ double ZxcvbnMatch(       //Returns: entropy value in bits.
 \end{lstlisting}
 
 To obtain the password strength level, it is necessary to compare the \texttt{zxcvbnMatch} return value (The entropy in bits) as seen in section \ref{sec:zxLevels}. The strength level is shown to the user with a progress bar.
-
+%TODO
+\todo{talk about models and table}
 To the user may be more relevant to see some estimates about how long it would take for an attacker to crack the password. This information can be obtained from the entropy, assuming some numbers for the attempts/time the attacker can perform. These results are shown in a table like the one in figure \ref{fig:zxcvbnTimes}
 \begin{figure}[htb]
   \centering
