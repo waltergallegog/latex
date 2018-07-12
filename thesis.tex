@@ -66,6 +66,7 @@
 \usepackage{listings}
 \usepackage[]{courier}
 \usepackage{tabulary}
+\usepackage{upquote}
 
 \usepackage{dcolumn}
 \usepackage{booktabs}
@@ -94,7 +95,7 @@
   stringstyle=\color{orange!70!black},
   numberstyle=\tiny\color{black},
   rulecolor=\color{black},
-  keywordstyle = [2]{\color{red!70!black}},
+  keywordstyle = [2]{\slshape\color{red!70!black}},
   keywordstyle = [3]{\color{red}},
   keywordstyle = [4]{\slshape\color{green!50!black}},
   morekeywords = {
@@ -122,7 +123,24 @@
                      QStringLiteral,
                      sqlite3_open_v2,
                      QSqlQuery,
-                     sqlite3
+                     sqlite3,
+                     crypto_filename,
+                     QFile,
+                     QInputDialog,
+                     QMessageBox,
+                     PasswordItemDelegate,
+                     MySortFilterProxyModel,
+                     QSqlTableModel,
+                     QStyledItemDelegate,
+                     QObject,
+                     MainWindow,
+                     connect,
+                     FiltersAligned,
+                     QHBoxLayout,
+                     QWidget,
+                     QDate,
+                     QModelIndex,
+                     QSqlRecord
   },
   %words already in the package but that we want in other color  
   deletekeywords = {
@@ -132,7 +150,15 @@
                     true,
                     false,
                     NULL,
-                    null
+                    null,
+                    new,
+                    this,
+                    auto,
+                    for,
+                    if,
+                    else,
+                    return,
+                    while
   },
   morekeywords = [2]{
                      typedef,
@@ -140,7 +166,17 @@
                      true,
                      false,
                      NULL,
-                     null                           
+                     null,
+                     new,
+                     this,
+                     SLOT,
+                     SIGNAL,
+                     auto,
+                     for,
+                     if,
+                     else,
+                     return,
+                     while                    
   },
   morekeywords = [3]{*},
   morekeywords = [4]{
@@ -156,7 +192,13 @@
                     SE3_ACCESS_USER,
                     SQLITE_OPEN_CREATE,
                     SQLITE_OPEN_READWRITE,
-                    SQLITE_OPEN_READONLY
+                    SQLITE_OPEN_READONLY,
+                    PASS_COL,
+                    IDENT_COL,
+                    DATE_COL,
+                    DESC_COL,
+                    DOM_COL,
+                    USER_COL
   },
 %  morekeywords = [4]{++},  
 %  
@@ -207,13 +249,13 @@
 %
 \FacoltaDi{Department of control and computer engineering}% lo spazio finale correttamente sparisce
 %\facolta[III]{Department of control and computer engineering}
-\Materia{Embedded Systems}
+\Materia{Computer Engineering}
 %\titolo{Password Wallet secured by the SEcube framework}% per la laurea quinquennale e il dottorato
-\titolo{A Secure Password Wallet based on the SEcube framework}
+\titolo{A Secure Password Wallet based on the SEcube™ framework}
 %\sottotitolo{Metodo dei satelliti medicei}% per la laurea quinquennale e il dottorato
 %
 %%%%%%% Corso degli studi
-\corsodilaurea{Computer Engineering}% per la laurea
+%\corsodilaurea{Computer Engineering}% per la laurea
 %\corsodidottorato{Meccanica}% per il dottorato
 
 %%%%%%% Per inserire la matricola rientrato sotto il nome di ogni
@@ -228,8 +270,7 @@
 %%%%%%% Relatori o supervisori
 \relatore{Prof.~Paolo Ernesto Prinetto}
 \secondorelatore{Dr.~Giuseppe Airò Farulla}
-%TODO
-\todo{check relatoris}
+
 
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Per mettere 4 relatori con classica
@@ -281,7 +322,7 @@
 %%%%%%% Seduta dell'esame
 %\sedutadilaurea{Agosto 1615}% per la laurea quinquennale (obsoleta);
 %%%%%%% oppure:
-\sedutadilaurea{\textsc{July} 2017-2018}% per la laurea magistrale
+\sedutadilaurea{\textsc{July} 2018}% per la laurea magistrale
 %\esamedidottorato{Novembre 1610}% per il dottorato
 %\annoaccademico{1615-1616}% solo con l'opzione classica
 %\annoaccademico{2006-2007}% idem
@@ -366,19 +407,19 @@
 
 \sommario
 
-Nowadays, having a large quantity of digital passwords is the norm, and as their number increases, it becomes impossible to memorize all of them, specially in the case of strong passwords which are very long and/or very random, and therefore hard to remember. These has led users to relay on software applications to save their passwords, the most common cases being web browsers and password wallets. The drawback of this approach is that security may be compromised, since all the passwords are stored in the same place an attacker could gain access to them. For users particularly interested in ensuring the security of their systems, this software based approach may not be acceptable. This work presents an alternative solution based on the SEcube™ framework that guarantees the security of the stored passwords.
+Nowadays, having a large quantity of digital passwords is the norm, and as their number increases, it becomes impossible to memorize all of them. This is specially true considering one should adopt strong passwords which are in general very long, and therefore hard to remember. This has led users to rely on software applications to manage their passwords, the most common cases being web browsers and password wallets. The drawback of this approach is that security may be compromised, since all the passwords are stored in the same place and an attacker could gain access to them. For users particularly interested in ensuring the security of their systems, this software based approach may not be acceptable. This work presents an alternative solution based on the SEcube™ framework that guarantees the security of the stored passwords.
 
-The SEcube™ (Secure Environment cube) framework consist of an open source security-oriented hardware platform designed by the Blu5 Group, and a set of open source software libraries developed by European research institutions. The core of the framework is the SEcube chip, which integrates three key security elements in a single package: A fast floating-point Cortex-M4 CPU, a high-performance FPGA and an EAL5+ certified Security Controller (Smart Card). This elements, in conjunction with the software libraries allows developers with little to no knowledge in information security to implement of highly reliable security applications.
+The SEcube™ (Secure Environment cube) framework consist of an open source security-oriented hardware platform designed by the Blu5 Group, and a set of open source software libraries developed by European research institutions. The core of the framework is the SEcube™ chip, which integrates three key security elements in a single package: A fast floating-point Cortex-M4 CPU, a high-performance FPGA and an EAL5+ certified Security Controller (Smart Card). These elements, in conjunction with a set of custom software libraries allow developers to implement highly reliable security applications.
 
-The desktop application developed in this work, named \textbf{SEcubeWallet}, was written in C/C++ and Qt. The application runs in a computer, denominated host, and the SEcube chip, known as device has to be connected to it via USB. The host request for security operations to the device, using the SEcube software libraries. Each device has a hard written master password, and in order to use it, it is necessary to perform an authentication procedure entering said password from the host.
-
-The wallets are managed using SecureSQlite, one of the SEcube libraries, which wraps the functionalities of the SQlite standard to create SEcube secured databases. In short, the data of interest is encrypted using the SEcube device and it is stored as a file in the host. This encrypted file can only be decrypted if the SEcube device is connected and if the user authenticates using the master password. 
+The desktop application developed in this work, named \textbf{SEcubeWallet}, was written in C/C++ and Qt. 
+%The application runs in a computer, denominated host, and the SEcube chip, known as device has to be connected to it via USB. The host request for security operations to the device, using the SEcube software libraries. Each device has a hard written master password, and in order to use it, it is necessary to perform an authentication procedure entering said password from the host.
+It manages passwords using SecureSQlite, one of the SEcube™ libraries, which wraps the functionalities of the SQlite standard to create SEcube™ secured databases. In short, the data of interest is encrypted using the SEcube™ device, and can only be decrypted if the device is connected and the user authenticates using a master password. 
 As the core operations are performed by the device, not by the host, the encryption/decryption can be done in any computer where an appropriate version of Qt is installed and the device is connected.
 
-As front end, the application presents the user a pleasant and intuitive graphical user interface. With it, the user can easily create, delete, open, and modify password wallets. The GUI is configurable and as it runs in Qt is cross-platform.
-Additionally, the application allows the user to generate passwords using the PwGen library, and passphrases using an ad hoc developed function. This, together with the possibility to realistically check the entropy of the generated pins using the zxcvbn dropbox library, encourages the users to secure their systems with strong passwords/passphrases.
+As front end, the application presents the user with a pleasant and intuitive graphical user interface. With it, the user can easily create, delete, open, and modify password wallets. The GUI is easily configurable and is cross-platform.
+Additionally, the application can suggest strong Passwords and Passphrases and verify the entropy of the ones provided by the user.
 
-In conclusion, SEcubWallet is an excellent application for the storing and management of passwords. As it relays on the SEcube framework it is trustworthy and the information is virtually impossible to steal. Thanks to the developed GUI it is easy to use, and it offers some interesting functionalities to increase the user experience.
+In conclusion, SEcubeWallet is an excellent application for the storing and management of passwords. As it relies on the SEcube™ framework it is trustworthy and the information is virtually impossible to steal. Thanks to the developed GUI it is easy to use, and it offers some interesting functionalities to increase the user experience.
 
 
 % \paginavuota % funziona anche senza specificare l'opzione classica
