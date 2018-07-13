@@ -8,7 +8,7 @@
 
 More detailed explanations of the following concepts will be given later on, but it is helpful to shortly define them here so this work is more readable.
 
-\subsection{Wallet} A password wallet is a digital form of securely keeping passwords and some meta information. In this work, a Wallet is stored as a Sqlite DataBase. A wallet can have as many tables as the user wants. For instance an user could have a table for storing social media passwords, another one for work-related passwords and a last one for credit cards and bank accounts passwords. Finally, each table has a set of defined fields (Username, Domain, Password, Date, Description).
+\subsection{Wallet} A password wallet is a digital form of securely keeping passwords and some meta information. In this work, a Wallet is stored as a SQLite DataBase. A wallet can have as many tables as the user wants. For instance an user could have a table for storing social media passwords, another one for work-related passwords and a last one for credit cards and bank accounts passwords. Finally, each table has a set of defined fields (Username, Domain, Password, Date, Description).
 
 \subsection{SEcube} SEcube™ is a custom chip produced by the Blu5 group \cite{Blu5} that integrates an ARM CPU, a FPGA and a SmartCard. The chip is specifically designed for security purposes, allowing developers to implement encryption/decryption functions that are executed fast and are guaranteed to be reliable. The chip can be connected to a PC using popular protocols like USB and Ethernet, so an application running on the PC can use the SEcube™ to encrypt/decrypt some data.
 
@@ -17,9 +17,9 @@ More detailed explanations of the following concepts will be given later on, but
 \subsection{SEfile} 
 SEfile is a Level 2 API that allows users to encrypt/decrypt data (files in the hard disk), so they can only be read when the SEcube™ chip is connected to the PC. When the SEcube™ is not connected, it is impossible to read the files as the information necessary to decrypt them is physically stored in the SEcube.
 
-\subsection{Sqlite DB}
+\subsection{SQLite DB}
 %TODO
-\todo{sqlite}
+\todo{SQLite}
 
 \section{Design}
 
@@ -41,18 +41,18 @@ The following is a brief explanation of these Libraries and they usage. More det
 
 When the user starts any application based on the SEcube™ platform, the first steps to perform are to open the communication with the device using Level0 functions from both host and device, and to authenticate the user by checking the login pin, using Level1 functions (again, from both sides). Figure \ref{fig:BasicDesign} depicts how the SEcubeWallet uses the authentication functions and they in turn communicate with the SEcube™ chip.
 
-\subsection{SecureSqlite3}
-As explained before, Wallets are stored as Sqlite DataBases. Fortunately, the SEcube™ SDK already provides a Level2 API for creating and managing encrypted Sqlite DBs, called SecureSqlite3. This API exploits the SEfile API to wrap some of the functions of the original Sqlite3 library, avoiding OS calls.
+\subsection{secureSQLite3}
+As explained before, Wallets are stored as SQLite DataBases. Fortunately, the SEcube™ SDK already provides a Level2 API for creating and managing encrypted SQLite DBs, called secureSQLite3. This API exploits the SEfile API to wrap some of the functions of the original SQLite3 library, avoiding OS calls.
 
-SecureSqlite allows to create/edit/save/open databases that when written to the disk are encrypted and can only be read when the SEcube™ is connected. Additionally, as it is implemented using wrappers, the developer only needs to include the source files in the project and can manage SecureSqlite DB with the same functions used for regular Sqlite DB. %TODO
-\todo{cite securesqlite}
+secureSQLite allows to create/edit/save/open databases that when written to the disk are encrypted and can only be read when the SEcube™ is connected. Additionally, as it is implemented using wrappers, the developer only needs to include the source files in the project and can manage secureSQLite DB with the same functions used for regular SQLite DB. %TODO
+\todo{cite secureSQLite}
 
-Figure \ref{fig:BasicDesign} shows the SEcubeWallet application using SecureSqlite to read/write the encrypted wallet stored in disk.
+Figure \ref{fig:BasicDesign} shows the SEcubeWallet application using secureSQLite to read/write the encrypted wallet stored in disk.
 
-\subsection{Sqlite3}
-Because the use of SecureSqlite involves a call to the SEcube™, a regular Sqlite3 DB is also used, but unencrypted data is never saved to the disk. Sqlite3 allows for the creation of an In-Memory DB, i.e. a DB whose content is always in the application's memory space and is therefore secured by the operating system. 
+\subsection{SQLite3}
+Because the use of secureSQLite involves a call to the SEcube™, a regular SQLite3 DB is also used, but unencrypted data is never saved to the disk. SQLite3 allows for the creation of an In-Memory DB, i.e. a DB whose content is always in the application's memory space and is therefore secured by the operating system. 
 
-The In-memory DB is used for editing. When the user want to save the wallet, i.e. write it to the disk, the contents of the In-Memory DB are dumped to the encrypted SecureSqlite DB. When the user opens a wallet from the disk, the reverse process occurs.
+The In-memory DB is used for editing. When the user want to save the wallet, i.e. write it to the disk, the contents of the In-Memory DB are dumped to the encrypted secureSQLite DB. When the user opens a wallet from the disk, the reverse process occurs.
 
 With the In-memory DB, unnecessary calls to the SEcube™ are avoided while maintaining the contents secured.
 
@@ -64,7 +64,7 @@ PwGen \cite{pwgen} is an open source library that generates passwords, that can 
 When the user is adding a new entry to a wallet, they can chose to enter a password or to automatically generate one.
 
 \subsection{PassPhrase Generator}
-In addition to the Password Generator PwGen, the user has the possibility to generate PassPhrases instead. PassPhrases are a popular alternative because they are easier to memorize and therefore can be longer, which in turns make them more secure. Further details about the usefulness of PassPhrases and how they compare against regular Passwords is given in section \ref{sec:zxcvbn}.
+In addition to the Password Generator PwGen, the user has the possibility to generate PassPhrases instead. PassPhrases are a popular alternative because they are easier to memorize and therefore can be longer, which in turns make them more secure. Further details about the usefulness of PassPhrases and how they compare against regular Passwords is given in section \ref{sec:zxcvbnth}.
 
 Although the PassPhrase Generator is not a library per se, it was included in the diagram because of its close relation with the PwGen and zxcvbn \cite{zxgit} libraries. It was developed by the author, and it works by selecting random words out of dictionary files. 
 
@@ -91,7 +91,7 @@ To recap, these are the key aspects of the used libraries:
 
 \section{Frameworks, Libraries and software tools} \label{sec:lib}
 
-As explained in the previous section, the core of the design is the use of the SEcube™ chip to perform security operations in order to encrypt/decrypt some data stored in the host (PC). The requests to the chip are made from the Qt application developed in this work, which runs in the host. Said application exploits the existing C libraries SEfile and SecureSqlite to ease the communication with the SEcube™. Additionally, the application also makes use of a random password generator PwGen and a strength estimator zxcvbn open libraries. 
+As explained in the previous section, the core of the design is the use of the SEcube™ chip to perform security operations in order to encrypt/decrypt some data stored in the host (PC). The requests to the chip are made from the Qt application developed in this work, which runs in the host. Said application exploits the existing C libraries SEfile and secureSQLite to ease the communication with the SEcube™. Additionally, the application also makes use of a random password generator PwGen and a strength estimator zxcvbn open libraries. 
 
 In the following sections a review of the SEcube™ platform's hardware and software components is given. Then a brief explanation of the C++/Qt framework and why it was chosen. Finally the additional used libraries are presented.
 
@@ -227,9 +227,9 @@ For our project we rely heavily on the development tools provided by the SEfile 
 
 ``SEfile targets any user that, by moving inside a secure environment, wants to perform basic operation on regular files. It must be pointed out that all encryption functionalities are demanded to the secure device in their entirety. In addition, SEfile does not expose to the host device details about what, or where it is reading/writing data: thus, the host OS, which might be untrusted, is totally unaware of what it is writing''. \cite{L2UserMan}.
 
-\subsubsection{SecureSqlite}
+\subsubsection{secureSQLite}
 
-\subsection{Sqlite3}
+\subsection{SQLite3}
 
 \subsection{Graphical User Interface: the Qt framework}
 The application's graphical user interface was developed using the \textbf{Qt framework}, version 5.8.0. 
@@ -245,15 +245,15 @@ For writing, compiling and debugging source code, the IDE \textbf{Qt Creator}, v
 The reasons behind the use of Qt are as follows:
 
 \begin{itemize}
-\item Qt is a C++ library, and as such, allows for a seamless use of the C libraries SEfile and SecureSqlite, which are the backbone of this project.
+\item Qt is a C++ library, and as such, allows for a seamless use of the C libraries SEfile and secureSQLite, which are the backbone of this project.
 
 \item Qt is cross-platform, meaning the developed application can be compiled to work on any of the major OSes. In particular, the development was carried out an tested on a Linux machine, but the application should work with no problems in Windows and MacOS. 
 
-\item Because of good designed and ready-to-use display items such as tables, menus and dialogues, it is possible to focus in writing the functional portions of the application without worrying too much about the GUI. And as it is open source, any Qt item can be modified and extended when it does not meet the expectations out of the box. In this project several display elements were improved, as will be seen in section \ref{Implementation}.
+\item Because of good designed and ready-to-use display items such as tables, menus and dialogues, it is possible to focus in writing the functional portions of the application without worrying too much about the GUI. And as it is open source, any Qt item can be modified and extended when it does not meet the expectations out of the box. In this project several display elements were improved, as will be seen in section \ref{sec:imp}.
 
 \item Thanks to the multitude of functions dedicated to ease the use of C++ libraries and OS calls, one can be more productive, and the resulting code is more reliable. For instance, this project makes extensive use of such libraries, like QSqlDatabase, QString, QProcess, etc. Again, more details are given in section \ref{sec:imp}
 
-\item Related works by research group \textsc{testgroup} from Politecnico di Torino using the SEcube™ framework, are written in Qt. Namely SecureSqliteBrowser and SEfile\_TXT, were used as base in the initial stages of development. This two projects can be found in the SEfileSDK available online \cite{SEcubeRes}.
+\item Related works by research group \textsc{testgroup} from Politecnico di Torino using the SEcube™ framework, are written in Qt. Namely secureSQLiteBrowser and SEfile\_TXT, were used as base in the initial stages of development. This two projects can be found in the SEfileSDK available online \cite{SEcubeRes}.
 %TODO
 \todo{research group name  TESTGROUP?}
 
@@ -308,7 +308,7 @@ By default pwgen behaves as if the options \textbf{-nc} were used, that is, pron
 The strongest passwords this program can generate are obtained with the options \textbf{-ys}, as it results in random passwords with special symbols. They are very hard to remember, and should only be used if the user is willing to open the SEcubeWallet application each time they need to use one of the password.
 
 
-\subsection{zxcvbn: Password strength estimation} \label{sec:zxcvbn}
+\subsection{zxcvbn: Password strength estimation} \label{sec:zxcvbnth}
 
 An important feature to have in a password manager is the possibility to realistically estimate how strong a password is, i.e., how hard could it be for hackers to crack it, as there is no point in using the SEcube™ system to protect weak passwords, that could be easily guessed with brute force attacks. As it is out of the author expertise to write a reliable function to make this estimation, it was decided to use a trusted project developed during the dropbox hackweek event in 2012. The estimator called \textbf{zxcvbn} was originally written in JavaScript aiming for an easy integration with multiple web browsers and OS. Fortunately, the community ported the library to a wide variety of languages including Python, Ruby and C/C++. In this work the C++ implementation was used. The project is Open Source and available for free use on GitHub \cite{zxgit}.
 
@@ -615,9 +615,9 @@ If the process continues, the next step is to close any previous in-memory datab
 \begin{lstlisting}[style=customc, float=htb, caption={New in memory database}, label = {lis:newDB}]
 QSqlDatabase dbMem; //The database handler, declared in header 
 
-//Check if sqlite is installed on OS
+//Check if SQLite is installed on OS
 if(!(QSqlDatabase::isDriverAvailable("QSQLITE")))
-  exit (1); //the application does not work without Sqlite
+  exit (1); //the application does not work without SQLite
 
 if (dbMem.isOpen()){ 
   save_table_geometry;
@@ -635,7 +635,7 @@ As explained before the in-memory data base is used for editing. It has the adva
 
 The last step is to update the GUI state, by enabling some action like \texttt{Add\_Table} and \texttt{Save\_Wallet}, and disabling others, like \texttt{Delete\_Table} and \texttt{Rename\_Table}.
 
-\subsubsection*{Save Wallet action}
+\subsubsection*{Save Wallet action} \label{sec:savewalletaction}
 To write the wallet contents to the disk, it is necessary to have a filename, so the first step is to check if the user already entered one (from previous saves). If not, with the dialogues in figure \ref{fig:saveWallet} the user can choose the directory and the filename to save.
 
 \begin{figure}[ht]
@@ -660,20 +660,20 @@ uint16_t secure_ls(    //returns 0 in case of success
 \end{lstlisting}
 
 
-After having a filename the next step is to read all of the tables in the current in-memory database, row by row. For each row a \texttt{sqlite} statement of the form \texttt{INSERT INTO table VALUES(user, dom, pass, date, desc)} is created. All of them are merge into a single statement which is executed into the secured in-disk database. This ensures only one access to the SEcube™ and disk. This process is somewhat slow and the GUI is disabled while it is performed. A simplified version of the code is shown in listing \ref{lis:save} 
+After having a filename the next step is to read all of the tables in the current in-memory database, row by row. For each row a \texttt{SQLite} statement of the form \texttt{INSERT INTO table VALUES(user, dom, pass, date, desc)} is created. All of them are merge into a single statement which is executed into the secured in-disk database. This ensures only one access to the SEcube™ and disk. This process is somewhat slow and the GUI is disabled while it is performed. A simplified version of the code is shown in listing \ref{lis:save} 
 
 \begin{lstlisting}[style=customc, float=htb, caption={simplified Save process}, label = {lis:save}, escapechar=¬]
 sqlite3 *dbSec;    //Secure database declaration, in header
 QSqlDatabase dbMem;//The database handler, declared in header 
-QSqlQuery query;   //To exec sqlite statements, dec. in header
+QSqlQuery query;   //To exec SQLite statements, dec. in header
 
-//Create Sqlite DB, with filename specified by user If SEcube is connected, the resulting file is encry.
+//Create SQLite DB, with filename specified by user If SEcube is connected, the resulting file is encry.
 sqlite3_open_v2 (fileName.toUtf8(),   
                 &dbSec, 
                 SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE , 
                 NULL) 
                 
-QString finalSql; //To Merge all the sqlite statements.
+QString finalSql; //To Merge all the SQLite statements.
 static const QString insert = 
   QStringLiteral("INSERT INTO '%1' VALUES(%2);"); //statement
   
@@ -704,7 +704,7 @@ foreach (const QString table, tables) { // loop all the tables
 sqlite3_exec(dbSec, finalSql.toUtf8(), NULL, 0, &zErrMsg);
 \end{lstlisting}
 
-One problem found during the open process of a secured in-disk wallet (that will be explained latter on) is that the first table is always corrupt and gives the error: \texttt{database disk image is malformed}. The error only occurs when using the SEcube™ version of the sqlite library. Because it was impossible to find the origin of the error, it was decided to use a workaround: In the save wallet process, an empty table is inserted at the beginning of the in disk database (see line \ref{line:empty} in listings \ref{lis:save}). When opening the wallets, the empty table is simply ignored. With this, the real tables are always correctly read an the application works as intended.
+One problem found during the open process of a secured in-disk wallet is that the first table is always corrupt and gives the error: \texttt{database disk image is malformed}. The error only occurs when using the SEcube™ version of the SQLite library. Because it was impossible to find the origin of the error, it was decided to use a workaround: In the save wallet process, an empty table is inserted at the beginning of the in disk database (see line \ref{line:empty} in listings \ref{lis:save}). When opening the wallets, the empty table is simply ignored. With this, the real tables are always correctly read an the application works as intended.
 
 
 \subsubsection*{Save Wallet As action}
@@ -854,14 +854,14 @@ query.prepare("create table '"+tableName+
               "Description TEXT )");
 
 if (!query.exec()){
-  return; // maybe a table with that name already exists, or is a reserved sqlite command
+  return; // maybe a table with that name already exists, or is a reserved SQLite command
 \end{lstlisting}
 
 If the table is the first one to be added in the wallet, a \texttt{table view} and \texttt{filters} are created and added to the GUI, in order to display the table. Otherwise, the \texttt{table view} is just updated. These elements are explained in details in the upcoming sections.
 
 \subsubsection*{Delete Table action}
 
-To delete a table it is enough to use the sqlite \texttt{DROP TABLE} command as seen in listings \ref{lis:deleteT}. With the \texttt{QMessageBox} the user is asked to confirm before deleting.
+To delete a table it is enough to use the SQLite \texttt{DROP TABLE} command as seen in listings \ref{lis:deleteT}. With the \texttt{QMessageBox} the user is asked to confirm before deleting.
 
 After deleting, the \texttt{table view} needs to be updated, to show the next table in the wallet. If there are no more tables, the view is simply hidden, and other GUI elements like \texttt{Add Entry} disabled.
 
@@ -879,7 +879,7 @@ query.prepare("DROP TABLE '" + tableName+"'");
 \end{lstlisting}
 
 \subsubsection*{Rename Table action}
-To Rename a table the sqlite command \texttt{ALTER TABLE RENAME TO} is used as seen in listing \ref{lis:renameT}. After this, the \texttt{QComboBox} used to select the current table being displayed is updated to reflect the name change.
+To Rename a table the SQLite command \texttt{ALTER TABLE RENAME TO} is used as seen in listing \ref{lis:renameT}. After this, the \texttt{QComboBox} used to select the current table being displayed is updated to reflect the name change.
 \begin{lstlisting}[style=customc, float=htb, caption={Rename Table}, label = {lis:renameT}]
 QSqlQuery query(dbMem);
 query.prepare("ALTER TABLE '" + currentName + "' RENAME TO '"+newName+"'");
@@ -936,7 +936,7 @@ ui->tableView->setItemDelegateForColumn(PASS_COL, passDelegate);
 ui->tableView->setModel(proxyModel);
 
 //Configure table
-ui->tableView->//Hide Sqlite ID column, not useful to user
+ui->tableView->//Hide SQLite ID column, not useful to user
   setColumnHidden(IDENT_COL, true);
 ui->tableView->//Hide row header, not useful
   verticalHeader()->hide();
@@ -1154,12 +1154,12 @@ This subwindow is composed of:
 \item \textbf{Show password checkBox: }By changing the echo mode in the password \texttt{QLineEdit}, it can be hidden or shown. It is hidden by default
 \item \textbf{Password Generator Button: }This triggers one of two available generators: PwGen or PassPhraseGen. These are explained in detail in sections \ref{sec:pwgen} and \ref{sec:ppgen}
 \item \textbf{l33t buttons: }To increase the password strength the user can translate it to l33t. If they are not happy with the result, a button to reverse the action is also present. The l33t implementation is explained in section \ref{sec:l33t}
-\item \textbf{Password Strength elements: } A Progress Bar used to display the password strength calculated with the zxcvbn library, a label to show some information about the strength, and a button to open a subwindow showing the details of these calculations. If the zxcvbn library has not been compiled by the user in the settings window, these elements are disabled. The zxcvbn library is explained in details in section  \ref{sec:zxcvbn}
+\item \textbf{Password Strength elements: } A Progress Bar used to display the password strength calculated with the zxcvbn library, a label to show some information about the strength, and a button to open a subwindow showing the details of these calculations. If the zxcvbn library has not been compiled by the user in the settings window, these elements are disabled. The zxcvbn library is explained in details in section  \ref{sec:zxcvbnim}
 \item \textbf{Bottom buttons: }The \texttt{ok} button is only functional when all the text fields (except for \texttt{description}, which is optional) are filled, and the two passwords coincide. The \texttt{settings} button opens the settings subwindow so the user can customize the password generators or the strength estimator without having to close the \texttt{AddEntry} subwindow.
 
 \end{itemize}
 
-When the user clicks the \texttt{ok} button, the new entry needs to be added to the database. Instead of using Sqlite commands, it is easier to rely in the high-abstraction level methods offered by the \texttt{model}, as seen in listing \ref{lis:addtomodel}.
+When the user clicks the \texttt{ok} button, the new entry needs to be added to the database. Instead of using SQLite commands, it is easier to rely in the high-abstraction level methods offered by the \texttt{model}, as seen in listing \ref{lis:addtomodel}.
 
 
 \begin{lstlisting}[style=customc, float=htb, caption={Add entry to database using model}, label = {lis:addtomodel}]
@@ -1169,7 +1169,7 @@ if(add->result()==QDialog::Rejected)
   return; // Error or cancel, do nothing
 
 QSqlRecord rec = model->record(); // Temp entry
-rec.setGenerated("id", false); // is managed by sqlite
+rec.setGenerated("id", false); // is managed by SQLite
 
 //Get the values entered by user in AddEntry subwindow
 rec.setValue("Username"   , add->getUser());
@@ -1210,13 +1210,31 @@ The status bar, at the bottom of the main window, is used to display three types
 
 \item \textbf{Success: }After any save/open/delete operation, a black message is shown for two seconds in the left side of the status bar, informing the user the process concluded without issues.
 
-\item \textbf{Error/Warning: }In the eventuality of an error or warning during the execution of a command, for instance, if it is not possible to load the Sqlite driver, a red message in the left side of the status bar informs the user about the issue.
+\item \textbf{Error/Warning: }In the eventuality of an error or warning during the execution of a command, for instance, if it is not possible to load the SQLite driver, a red message in the left side of the status bar informs the user about the issue.
 \end{itemize}
 
 
 \subsubsection*{Preferences Subwindow}
 
 This subwindow is accessible from the \texttt{Menu Bar} and from the \texttt{AddEntry} subwindow. It allows to customize the password generators and the strength estimator. Their available configurations are covered in their respective sections. 
+
+\subsubsection*{Environment subwindow}
+
+From the environment subwindow the user can select which of the keys and algorithms present in the SEcube™ chip to use for the encryption/decryption process. 
+
+Keys are used to divide wallets into categories (work, banking, social) and allow their sharing.  A given user can have for instance one key that is shared among co-workers, so all of them can access work-related passwords using their respective SEcube™ devices. Similarly, other key can be shared with their family to access banking accounts passwords, and finally have a personal key that is not shared with anyone and is used to encrypt social media passwords. 
+
+The current SEcube™ firmware version only includes one algorithm for the data encryption/decryption process, but in the future it may provide more than one. Different algorithms offer different security characteristics that some advance user may find useful. For example one user could be concerned about some specific type of attack that requires an special algorithm, or regard one algorithm superior over the others. 
+
+Figure \ref{fig:envi} depicts the environment subwindow.
+
+\begin{figure}[htb]
+  \centering
+  \captionsetup{justification=centering}
+  \centerline{\includegraphics[width=0.5\columnwidth]{chapters/figures/development/envi.png}}
+  \caption{Environment subwindow}
+  \label{fig:envi}
+\end{figure}
 
 
 \subsubsection*{Help Subwindow}
@@ -1349,7 +1367,7 @@ nofosootei   & 10 & BA0 &  6.50 (Level 2)\\
 \label{tab:pwgenExm}
 \end{table}
 
-\subsection{zxcvbn Password strength estimator} \label{sec:zxcvbn}
+\subsection{zxcvbn Password strength estimator} \label{sec:zxcvbnim}
 
 The original zxcvbn project, developed in CoffeeScript became so popular it was ported to a large variety of languages. In this work the C/C++ version available at \cite{zxgit} was used. The files used in this project are:
 
@@ -1593,23 +1611,144 @@ m{6.5cm}cccr
 
 The results in the table indicate the most important parameter is the number of words. Three words are enough to reach a zxcvbn level 4, which, as seen in previous sections, is very secure. A two word PassPhrase as long as \texttt{DrammaturgicoSbatacchiare} is not better than the shorter \texttt{ImmobileCwSites}, because the latter has one more word. The minimum word length also influences the PassPhrase entropy, but their effects are not as pronounced. Finally, working only with to the lower part of the dictionary may seem to not have any effect, but in reality its use is crucial: it ensures the generated PassPhrases do not contain any of the most common words, like \texttt{the} or \texttt{essere}. From the results on the table we can not appreciate this fact, but at least we learn the option does not do any harm either. (Although if the attacker finds out the user is generating PassPhrases using only the 30\% most uncommon words on a given language, their job would get easier).
 
-%
-%\subsection{The Fat32 bug}
-%During the application development an strange and elusive bug was found: The SecureSqlite library 
-%
-%I may have managed to solve the fat32 bug, but I'm not entirely sure. Sorry it took me so long, but I was expecting the error to be in the secureSqlite library and not in SEfile.
-%I tested both my application and SecureSqliteBrowser, and they are working correctly, if you can also test that would be great.
-%The error I found was in the SEfile library, in the sefile.c file. Attached you can the modified version of it, and at the end of this email I copied/paste my comments on the modifications. All the changes were made in the secure_seek function. (around line 833)
-%
-%Regards,
-%Walter Gallego
 
+\subsection{The FAT32 bug} \label{sec:fat32bug}
+During the application development a strange and elusive bug was found: The \texttt{secureSQLite} library did not work properly with the FAT32 file system. When the save directory was in a FAT32 system, (either a partition, an external hard disk or an USB stick), the created databases were not stored properly, and when trying to open them they were completely empty. Only the database name was saved; any table in the wallet was lost. Moreover, after saving, besides the \texttt{.sqlite} file, a \texttt{.sqlite-journal} was created. Figure \ref{fig:fat32} depicts the presences of this file in a FAT32 file system.
 
+\begin{figure}[htb]
+  \centering
+  \captionsetup{justification=centering}
+  \centerline{\includegraphics[width=0.55\columnwidth]{chapters/figures/development/fat32.png}}
+  \caption{secureSQLite Databases in a FAT32 file system}
+  \label{fig:fat32}
+\end{figure}
 
+This file is known as a rollback journal and is used by the SQLite standard to avoid database corruption when a transaction can not be completed. From the SQLite official documentation \cite{journal}:
+``The rollback journal is always located in the same directory as the database file and has the same name as the database file except with the 8 characters "-journal" appended. The rollback journal is usually created when a transaction is first started and is usually deleted when a transaction commits or rolls back. The rollback journal file is essential for implementing the atomic commit and rollback capabilities of SQLite. Without a rollback journal, SQLite would be unable to rollback an incomplete transaction, and if a crash or power loss occurred in the middle of a transaction the entire database would likely go corrupt without a rollback journal.
+The rollback journal is usually created and destroyed at the start and end of a transaction, respectively. But there are exceptions to this rule.
+If a crash or power loss occurs in the middle of a transaction, then the rollback journal file is left on disk. The next time another application attempts to open the database file, it notices the presence of the abandoned rollback journal (we call it a "hot journal" in this circumstance) and uses the information in the journal to restore the database to its state prior to the start of the incomplete transaction.''
 
+The presence of the journal file hints at the problem being an interruption during the execution of \texttt{secureSQLite} write functions when working on a FAT32 system. A few test were performed to try to narrow down the error origin:
 
+\begin{itemize}
+\setlength\itemsep{0pt}
+\item The application was tested in other computer running a different OS, and the problem persisted, always in FAT32 systems, meaning it was not an OS specific issue.
+\item The application \texttt{secureSQLiteBrowser} which also uses the secureSQLite library was tested and presented the same problem, meaning it was not an error in the library usage.
+\item The demo applications \texttt{SEfile\_IMG}  and \texttt{SEfile\_TXT} were also tested, and worked without any problems in FAT32 partitions. These applications do not use \texttt{secureSQLite}; they leverage directly the \texttt{SEfile} library, which is also used by the \texttt{secureSQLite} library, meaning the problem was not in \texttt{SEfile} but in \texttt{secureSQLite}. This was proved to be a wrong assumption later on.
+\end{itemize}
 
+With these points in mind, the bug was searched inside the \texttt{secureSQLite} library, but after several debug sessions, it was possible to trace the error origin to the \texttt{SEfile} library. Specifically, in the file \texttt{SEfile.c}, and function \texttt{secure\_seek}. Figure \ref{fig:traceback} shows the actual traceback, from the call to \texttt{sqlite3\_exec} in the \texttt{Save\_Wallet} action, all the way up to the \texttt{secure\_seek} function.
 
+\begin{figure}[htb]
+  \centering
+  \captionsetup{justification=centering}
+  \centerline{\includegraphics[width=0.8\columnwidth]{chapters/figures/development/traceback.png}}
+  \caption{Error Traceback}
+  \label{fig:traceback}
+\end{figure}
 
+The actual error is produced in the call to the OS function \texttt{lseek()} in line \ref{line:error} of listing \ref{lis:secseek}. 
+\begin{lstlisting}[style=customc, float=htb, caption={FAT32 Error origin at secure\_seek}, label = {lis:secseek}, escapechar=¬]
+/**This function is used to move correctly the file pointer.
+ * [in]  hFile     The handle to the file to manipulate.
+ * [in]  offset    Amount of character we want to move.
+ * [out] position  Pointer to int32_t to store the final pos.
+ * [in]  whence    Move from file start, end or current pos.
+ * [return]        Returns '0' in case of success.*/
+uint16_t secure_seek(SEFILE_FHANDLE *hFile, int32_t offset, int32_t *position, uint8_t whence){
+  ...  
+  buffer_size = *position - file_length;
+  if(buffer_size>0){ ¬\label{line:buffer}¬
+    //if destination exceed the end of file, empty sectors are inserted at the end to keep the file consistency
+    buffer=calloc(buffer_size, sizeof(uint8_t));
+    if(buffer==NULL)
+      return SEFILE_SEEK_ERROR;
+    
+    if((file_length%SEFILE_LOGIC_DATA)){
+      errno = 0; //clear errno 
+      hTmp->log_offset=lseek( // the error is produced here ¬\label{line:error}¬
+        hTmp->fd, 
+        ((file_length%SEFILE_LOGIC_DATA)-SEFILE_SECTOR_SIZE), 
+        SEEK_END);
+      error = errno;//capture errno, 22 when in FAT32 systems
+      if(hTmp->log_offset==4294967295)
+        //lseek returns (off_t)-1 when error. off_t is 32 bits, so 2^32-1 = 4294967295
+        return SEFILE_SEEK_ERROR; //the upcoming secure_write call fails anyway
+      
+      if(secure_write(&hTmp, buffer, buffer_size)){
+        free(buffer);
+        return SEFILE_SEEK_ERROR;
+      }   
+\end{lstlisting}
 
+\vspace{15pt}
+The \texttt{lseek()} function, as defined in the linux manual page \cite{lseek}:
 
+\texttt{\textcolor{blue}{off\_t} lseek(\textcolor{blue}{int} fd, \textcolor{blue}{off\_t} offset, \textcolor{blue}{int} whence);}
+
+``\textbf{\texttt{lseek()}} repositions the file offset of the open file description
+       associated with the file descriptor \texttt{fd} to the argument \texttt{offset}
+       according to the directive \texttt{whence} as follows:
+       
+       \texttt{SEEK\_SET} The file offset is set to offset bytes.
+       
+       \texttt{SEEK\_CUR} The file offset is set to its current location plus offset bytes.
+       
+       \texttt{SEEK\_END} The file offset is set to the size of the file plus offset bytes.
+lseek() allows the file offset to be set beyond the end of the file
+       (but this does not change the size of the file)
+       
+\textbf{Return Value:} Upon successful completion, \texttt{lseek()} returns the resulting offset
+location as measured in bytes from the beginning of the file.  On error, the value \texttt{(off\_t) -1} is returned and \texttt{errno} is set to indicate the error.''
+
+\vspace{7pt}
+\texttt{secure\_seek()} can be seen as a wrapper that uses the OS function \texttt{lseek()} to move the file pointer correctly, taking into account the way the \texttt{SEfile} library redefines a file, including the overhead added by sectors and headers that allow the data to be encrypted.
+
+\vspace{7pt}       
+To better understand what was causing the error, the \texttt{return} and \texttt{errno} values for two save operations of the same database were compared. One into a FAT32 file system and the other into a ext4 system.
+
+When the FAT32 system was used, the \texttt{return} value was indeed \texttt{(off\_t)-1}, and the \texttt{errno}, was set to \texttt{22}, which corresponds to:
+
+``\texttt{EINVAL}:  \texttt{whence} is not valid.  Or: the resulting file offset would be negative, or beyond the end of a seekable device.''
+
+When saving into an ext4 file system, the \texttt{return} value was \texttt{9844} and \texttt{errno} was equal to zero.
+
+\vspace{7pt}
+Figure \ref{fig:errordebug} shows this difference, and it is worth noticing that besides the file descriptor and pointers (always different for different executions), the rest of the variables have the same value
+\begin{figure}[ht]
+  \centering
+  \subfloat[FAT32 filesystem\label{}]{\includegraphics[width=0.48\textwidth]{chapters/figures/development/fat32debug.png}}
+  {}
+  \subfloat[ext4 filesystem\label{}]{\includegraphics[width=0.48\textwidth]{chapters/figures/development/ext4debug.png}}
+  \caption{Return and errno values for a save operation}
+ \label{fig:errordebug}
+\end{figure}
+
+Going back to the \texttt{secure\_seek()} code in listing \ref{lis:secseek}, the line \ref{line:error} moves the file pointer to the last \texttt{LOGIC\_DATA} byte, because in order to keep the file consistency, its is required to write empty sectors starting from this position until the end of the file. To do so, starting from the end of the file (thus the argument \texttt{SEEK\_END}), the function moves the pointer backwards the number of empty bytes in the last sector.
+
+In order to move backwards, the \texttt{offset} argument of \texttt{lseek()} must be negative. In this case, the argument is equal to: 
+
+\lstset{style=customc}
+\lstinline"offset = (file_length%SEFILE_LOGIC_DATA)-SEFILE_SECTOR_SIZE"
+
+Which should always be always negative, but it turns out, in the case of the FAT32 file system, this offset is not interpreted as a 2's complement negative value, but as a very large positive one. Therefore, the \texttt{lseek()} function tries to move the pointer outside the file limit, explaining the error: \texttt{EINVAL}: the resulting file offset would be negative, or beyond the end of a seekable device.
+
+\vspace{7pt}
+To fix the error, a simple cast to \texttt{\textcolor{blue}{int32\_t}} for the \texttt{offset} argument is enough, resulting in the call:
+\vspace{5pt}
+
+\lstinline|hTmp->log_offset=lseek(|
+
+\lstinline|  hTmp->fd,| 
+
+\lstinline| (int32_t)((file_lengh%SEFILE_LOGIC_DATA)-SEFILE_SECTOR_SIZE),| 
+
+\lstinline|  SEEK_END);|
+\vspace{7pt}
+
+This kind of casting was actually found in other function calls in the \texttt{SEfile.c} file, so it made sense to use it in this situation too.
+
+\vspace{7pt}
+The reason the problem only affected FAT32 partitions is probably related to the fact that, as \texttt{lseek()} needs to move a file pointer, low-abstraction level functions need to be used, which are have different implementations for each type of file system. The ext4 low level functions were able to interpret the offset as negative whereas the FAT32 took it as positive.
+
+Why the error only appears when using the \texttt{secureSQLite} library, and not in the demo applications \texttt{SEfile\_IMG} and \texttt{SEfile\_TXT} honestly remains a mystery. It may be  that the condition in line \ref{line:buffer} of listing \ref{lis:secseek} (\lstinline|if(buffer_size>0)|), that evaluates if the destination exceeds the end of file, is only met in rare occasions, and the way SQLite journaling works is one of them.
