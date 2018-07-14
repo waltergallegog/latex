@@ -41,11 +41,25 @@ A hardware-based manager uses a two-factor authentication method. In order to en
 Regarding the second point, in a lot of cases the portable device is the one doing all the actual encryption/decryption of data. The host machine is only used to provide the GUI so the user can enter their master password and to display their protected passwords. As the portable device is custom designed to be as secure as possible, it is much more harder to corrupt than an OS or a software application.
 
 \vspace{10pt}
-In conclusion, storing and protecting passwords is a very important element of digital security, and one of the best approaches to the date are hardware-based managers. In this work one of said managers was designed and developed. The manager relies on SECUBE™ hardware and software framework...
+In conclusion, storing and protecting passwords is a major goal in digital security, and one of the best approaches to the date are hardware-based managers. This work regards one of them, implemented as a desktop application that exploits the capabilities of the SEcube™ (Secure Environment cube) hardware and software framework. The core of the framework is the SEcube™ chip developed by the Blu5 Group\citep{Blu5}, which integrates three key security elements in a single package: A fast floating-point Cortex-M4 CPU, a high-performance FPGA and an EAL5+ certified Security Controller (Smart Card). This chip, in conjunction with a set of custom device-side software libraries\cite{SEcubeRes} developed by European research institutions, act as the password manager's hardware device, and is in charge of authenticating the user and encrypting/decrypting the data.
 
-\vspace{10pt}
+The desktop application, named SEcubeWallet, was written in C/C++ and Qt, and it interacts with the SEcube™ device, requesting services like authentication and encryption. Its main tasks are:
+\begin{itemize}
+\setlength\itemsep{-3pt}
+\item Manage the set of passwords (hereinafter referred to as a Wallet) using secureSQLite, one of the SEcube™ host-side libraries, that works by wrapping the functionalities of the SQlite standard to create SEcube™ secured databases.
+\item Serve as GUI so the user can authenticate to the SEcube™ device and create, open, edit, save and delete wallets with ease. The GUI displays the wallet's content in a table view and each column can be filtered individually.
+\item Suggest strong Passwords (and Passphrases) which can be used with confidence in any login service. The application also verifies the entropy (strength measure) of the generated passwords, or of the ones provided by the user.
+\end{itemize}
 
-The remaining of the thesis is organized as follows: First an overview of some related work is given...
+\newpage
+
+The remaining of the thesis is organized as follows: 
+
+Chapter \ref{chap:related} gives an overview of some existent hardware-based password managers and of other applications based on the SEcube™ framework. 
+
+In Chapter \ref{chap:dev} the application development process is explained, by covering its general design, the hardware and software libraries used, and the actual implementation showing also relevant portions of code. 
+
+Chapter 
 
 
 
