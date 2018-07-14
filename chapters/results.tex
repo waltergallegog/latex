@@ -1,4 +1,4 @@
-\chapter{Results, Discussion and future work}
+\chapter{Results, Discussion and Future work}
 
 \section{SEcubeWallet weaknesses}
 In this section, the weaknesses of the SEcubeWallet application are discussed, as well as some ideas about how to fix them.
@@ -20,7 +20,7 @@ Even if the FAT32 bug (see section \ref{sec:fat32bug}) can be considered to be f
 The SEcubeWallet application has only been tested running on Linux. Although Qt is platform independent, some of the application functionalities may need some changes to work on Windows or Mac systems. For example, the zxcvbn compilation process relies on gcc commands, that may not be available in Windows. Moreover the FAT32 bug is a very OS specific issue, as it involves the use of the lseek() function (Linux and Mac). It may be the case the bug does not exists in a Windows machine, or on the contrary there are other errors waiting to be fixed.
 
 
-\subsection{missing icons}
+\subsection{Missing icons}
 The reader of this thesis may have noticed the lack of icons in all of the SEcubeWallet Windows. Due to tight time constraints, it was decided to allocate most of the efforts into other aspects of the application, but that is not to say icons are not important. Future version of the application will definitely have icons to increase the user experience.
 
 
@@ -52,7 +52,8 @@ Exploit the capabilities of the SEcube™ platform to protect all that informati
 
 A couple of alternatives come to mind in order to implement this integration:
 \begin{itemize}
-\setlength\itemsep{0pt}
+\setlength\itemsep{-3pt}
+
 \item Borrow the idea followed by the Mooltipass system, porting the entire Qt application to a complement for the most popular web browsers (Firefox, Chrome, Opera).
 \item Implement a web browser complement that "talks" with the SecubeWallet application and request for passwords when the user wishes to autofill a login field.
 \item Follow the auto-type approach used by the software password manager KeePass. \cite{autotype}. ``KeePass features an "Auto-Type" functionality. This feature allows you to define a sequence of keypresses, which KeePass can automatically perform for you. The simulated keypresses can be sent to any other currently open window of your choice (browser windows, login dialogs, ...). By default, the sent keystroke sequence is \{\textsc{username}\} \{\textsc{tab}\} \{\textsc{password}\} \{\textsc{enter}\}, i.e. it first types the user name of the selected entry, then presses the Tab key, then types the password of the entry and finally presses the Enter key.''

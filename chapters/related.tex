@@ -22,7 +22,8 @@ Its use is very, simple, as explained in their official website \cite{mooltipass
 
 ``The Mooltipass is designed to be as simple as possible to use for users of all backgrounds and ages:
 \begin{enumerate}
-\setlength\itemsep{0pt}
+\setlength\itemsep{-3pt}
+
 \item Plug the Mooltipass to your computer/tablet/phone. No driver is required
 \item Insert your smartcard, unlock it with your PIN. Without the PIN, the card is useless.
 \item Visit a website that needs a login. If using our browser plugin, the Mooltipass asks your permission to send the stored credentials, or asks you to save new ones if you are logging in for the first time.
@@ -50,7 +51,8 @@ Mooltipass is open software and open hardware. In fact they encourage the commun
 The Mooltipass project started off as a Hackday post from developer Mathieu Stephan, that gained enough recognition by the community to be founded by a kickstarter campaign. The Hackday project website \cite{mphack} contains more details regarding the hardware implementation:
 
 \begin{itemize}
-\setlength\itemsep{0pt}
+\setlength\itemsep{-3pt}
+
 \item \textbf{ST662ACD-TR:} Power Management
 \item \textbf{ATMEGA32U4-MU:} Arduino compatible Microprocessor
 \item \textbf{AT88SC102:} Secure Memory Smart Card
@@ -68,7 +70,7 @@ Figure \ref{fig:mparchi} shows the basic architecture.
 
 In conclusion, mooltipass is a mature project that follows the same idea developed in this work: Guarantee the security of a set of passwords by allowing their decryption only through the use of a hardware device that the user will carry with them, hopefully, all the time. However there are some important difference between their system and SEcubeWallet:
 \begin{enumerate}
-\setlength\itemsep{0pt}
+\setlength\itemsep{-3pt}
 \item SEcubeWallet is based on the SEcube™ platform, making it much more trustworthy and robust, as this is a platform even used in military applications, and has been tested in the most demanding conditions.
 
 \item Because SEcube™ integrates all the required security elements into one single chip, the final product is much more smaller (The size of a regular USB stick) than the mooltipass device.
@@ -127,30 +129,3 @@ By merging this two projects, the result is a wonderful application to create en
 \end{figure}
 
 Because SEcubeWallet is heavily based on the use of the secureSQLite library, this application was used to learn how to integrate the library into a Qt project. Additionally, it was used as inspiration for some of the GUI elements, like the filters above each column and the use of menus and toolbars. It was also use to diagnose the SEcubeWallet in the developing stage, by creating a DB with one application and opening it in the other. secureSQLiteBrowser could be use as a password manager in the sense that it can securely store and display wallets as tables, but it lacks the simplicity and additional functionalities that make SEcubeWallet attractive to users.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

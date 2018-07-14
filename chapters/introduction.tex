@@ -1,2 +1,51 @@
 \chapter{Introduction}
 
+This thesis work regards the design and development of a hardware-based password manager system. To justify its relevance inside the current digital security ecosystem, three key questions need to be addressed. 
+\begin{itemize}
+\setlength\itemsep{-3pt}
+\item Are passwords still relevant?
+\item Why should people use password managers?
+\item Why are hardware-based approaches more reliable?
+\end{itemize}
+
+The answer to the first question is pretty straightforward. Yes. Passwords are, to the date, the dominant form of authentication in a lot of scenarios, including computer/server logins and web services. Even if other forms of authentication are already being widely use (hardware token devices and one-time passwords in banking; biometrics in smartphones), those applications still depend on passwords either as a fallback system (a smartphone will ask the user for a pin/password if the fingerprint recognition failed) or as a complementary security measure (to generate a one-time password, the user must first enter a regular password).
+
+Unauthorized access to computers or smartphones, a web service, banking information or company servers, all can have catastrophic consequences for victims. Personal data such as photos and emails, intellectual properties, money and even somebody’s identity are just a few examples of what authentication systems are protecting, reasons more than enough to be concerned about the reliability of passwords.
+
+\newpage
+
+Because passwords use is omnipresent, one would expect it to be a highly secure authentication method. This however, is in general not true. Since people have a large an increasing number of passwords that have to be memorized, they tend to use ones that are not strong but rather, easy to remember. The three most common bad practices are:
+\begin{itemize}
+\setlength\itemsep{-3pt}
+\item Using short and low complex passwords that include common sequences or words.
+\item Using passwords with some significance, like a birthday or a pet's name.
+\item Reusing the same password for multiple services, with small modifications or non at all.
+\end{itemize}
+
+With password managers the story is different. People no longer need to worry about remembering their passwords, managers will do that for them. Usually they also offer the capability to generate long, complex and completely random passwords. As a result, people can use a strong and unique password for each of their accounts, thus making attackers job infinitely harder.
+
+\vspace{15pt}
+
+The use of a password manager seems like the perfect solution, but there is one concern that arises. If all of the passwords are stored in the same place, it will become for sure a new target for attacks. Therefore the manager needs to be as robust and trustworthy as possible. Software-based managers usually work with a master password to encrypt/decrypt the data (i.e the other passwords). This means an attack could be carried out either by:
+\begin{itemize}
+\setlength\itemsep{-3pt}
+\item Cracking the encryption algorithm used by the manager
+\item Cracking the user's master password. This usually happens if an attacker has access to the encrypted data and have the ability to try billions and billions of passwords until they guess the right one.
+\item Corrupting the manager application or the host machine OS.
+\end{itemize}
+
+The algorithms used by good password managers are usually standard ones, meaning they are the state of the art, and therefore sturdy. The weak points of the system may be in the master password and in the application being corrupted. A hardware-based manager boost the security of the system by improving in this two points. 
+
+A hardware-based manager uses a two-factor authentication method. In order to encrypt/decrypt the data, two elements are required: a master password and a portable and unique device which is connected to the host machine (user's computer for instance). Therefore, even if an attacker has access to the encrypted data, without the device, they can not even start trying to crack the master password. 
+
+Regarding the second point, in a lot of cases the portable device is the one doing all the actual encryption/decryption of data. The host machine is only used to provide the GUI so the user can enter their master password and to display their protected passwords. As the portable device is custom designed to be as secure as possible, it is much more harder to corrupt than an OS or a software application.
+
+\vspace{10pt}
+In conclusion, storing and protecting passwords is a very important element of digital security, and one of the best approaches to the date are hardware-based managers. In this work one of said managers was designed and developed. The manager relies on SECUBE™ hardware and software framework...
+
+\vspace{10pt}
+
+The remaining of the thesis is organized as follows: First an overview of some related work is given...
+
+
+
