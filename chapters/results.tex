@@ -1,6 +1,12 @@
 \chapter{Results, Discussion and Future work}
 
-\section{SEcubeWallet weaknesses}
+
+\section{Results}
+
+
+
+
+\section{Application's weaknesses}
 In this section, the weaknesses of the SEcubeWallet application are discussed, as well as some ideas about how to fix them.
 
 
@@ -69,6 +75,9 @@ To have a functional SEcubeWallet for the Android system, three elements would n
 \item The GUI. Qt for Android \cite{android} ``allows to run Qt 5 applications on devices with Android v4.1 (API level 16) or later''. All of the Qt modules used by SEcubeWallet are supported, but a GUI redesign is required in order to cope with the constraints imposed by a smaller display.
 \end{itemize}
 
+\subsection{Eliminate dependability on the OS}
+
+The application relies heavily on the operating system's memory protection feature to ensure no other process can access its private data and steal the passwords while they are opened and temporary stored in the application's memory space. An interesting path of research is how to eliminate this dependency, or at least decrease it, using the SEcube™ encryption capabilities.
 
 \subsection{Custom columns}
 

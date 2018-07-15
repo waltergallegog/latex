@@ -5,7 +5,62 @@ This chapter gives a review of a few projects that are related to this work. The
 \section {Hardware Password Wallets}
 Over the last decade, ... 
 
-\subsection {Mooltipass: A Simple Offline Password Keeper} 
+
+\subsection{YubiKey}
+
+YubiKey is a family of hardware authentication devices developed by Yubico \cite{yubi}. The members in the family differ in several aspects including the communication protocol they support (\textsc{usb-a}, \textsc{usb-c}, \textsc{nfc}), the security services provided (Smart card, One time password, etc.), or the intended use (for desktop or mobile, for regular users or government). This review does not go into the details of each device, but rather it gives a general overview of the provided security services. 
+
+``A single YubiKey has multiple functions for protecting access to your email, your apps and your physical spaces. Use one or more YubiKey features, or use them all. The versatile YubiKey does not require software installation or a battery; just plug it into a USB port, and touch the button for secure and strong authentication \ldots  Even if someone steals your username and password (which is happening in bunches lately) they can’t get into your account without your physical key.''\cite{yubiworks}
+
+Figure \ref{fig:yubi} depicts some members of the YubiKey family.
+
+\begin{figure}[htb]
+  \centering
+  \captionsetup{justification=centering}
+  \centerline{\includegraphics[width=0.8\columnwidth]{chapters/figures/related/yubikeyfam.jpg}}
+  \caption{The YubiKey family}
+  \label{fig:yubi}
+\end{figure}
+
+The top supported services include Google Accounts, Facebook Accounts, GitHub, Docker, Dropbox, Salesforce, LastPass Premium password manager and Dashlane Premium password manager.
+
+The options provided by YubiKey are (taken from \cite{yubiworks}):
+
+\textbf{Static Passwords: }A basic YubiKey feature that generates a 38-character static password compatible with any application log-in. It is most-often used with legacy systems that cannot be retrofitted to enable other 2nd factor authentication schemes, such as pre-boot login. 
+
+\textbf{Yubico One-Time Password (OTP): }The YubiKey generates an encrypted password that can only be used once. Hackers require physical access of the user's YubiKey to generate the OTP. 
+
+\textbf{OATH – HOTP (EVENT): }
+The YubiKey generates a six or eight character one-time password (OTP) for logging into any service that supports OATH-HOTP, a strong open authentication standard. The action is event-based, meaning a new one-time password is generated for each event.
+
+\textbf{OATH – TOTP (TIME): }
+The YubiKey generates a six or eight character time-based one-time password (OTP) (in conjunction with a helper application) for logging into any service that supports OATH-TOTP, a strong authentication standard. A new password is generated at a set time interval, typically every 30 seconds.
+
+\textbf{Challenge and Response (HMAC-SHA1, Yubico OTP): }
+The Challenge Response method is best suited for offline validations. Used for Windows, Mac, and Linux computer login.
+
+\vspace{10pt}
+
+All of the previous features are available on every version of YubiKey except the U2F Security Key.
+
+\textbf{PIV-Compatible Smart Card: }
+Smart cards contain a computer chip that brokers data exchanges. These same features are contained in the YubiKey 4 and YubiKey NEO, based on the industry standard Personal Identity and Verification Card (PIV) interface over the CCID protocol, which supports PIV on a USB interface.
+
+\textbf{OpenPGP: }
+In the physical world, documents and data are often validated with a signature. In the virtual world, OpenPGP is a standards-based public key cryptography for signing, encrypting, and decrypting texts, e-mails, files, etc. Both the YubiKey 4 and Yubikey NEO can securely hold the PGP key.
+
+\textbf{FIDO U2F: }
+An emerging standard from the FIDO Alliance for applying two-factor authentication to any number of web-based applications, such as Gmail. Works via the browser, Chrome today, Firefox under development) and does not require any drivers. Does not require any client software or drivers. Read more about FIDO U2F.  U2F is available on every version of YubiKey except the YubiKey Standard and YubiKey Nano.
+
+\vspace{10pt}
+
+
+In May of 2016 Yubico decided to stop using the OpenPGP standard for the YubiKey 4 series in favour of close source code \cite{yubiopen}. A lot of concern was raised by the community as in security applications open source code is often preferred as it allows for independent control on security flaws.
+
+The variety of products and services offered by the YubiKey family allowed them to reach to a large pool of customers. Unfortunately, their decision to not use open source code makes it a hard choice to trust them and the reliability of their products.
+
+
+\subsection{Mooltipass: A Simple Offline Password Keeper} 
 
 The Mooltipass is a hardware-based password keeper commercial product that allows users to safely carry their credentials with them all the time, and use them when needed by connecting a portable device to a computer and authenticating using a 4 characters pin. 
 Figure \ref{fig:mool} depicts the mooltipass system.
