@@ -1,6 +1,7 @@
 \chapter{Introduction}
 
-This thesis work regards the design and development of a hardware-based password manager system. To justify its relevance inside the current digital security ecosystem, three key questions need to be addressed. 
+This work of Thesis deals with the design and development of a hardware-based password manager system. The need to work on such a topic can be explained by trying answering to the following questions
+
 \begin{itemize}
 \setlength\itemsep{-3pt}
 \item Are passwords still relevant?
@@ -8,11 +9,21 @@ This thesis work regards the design and development of a hardware-based password
 \item Why are hardware-based approaches more reliable?
 \end{itemize}
 
-The answer to the first question is pretty straightforward. Yes. Passwords are, to the date, the dominant form of authentication in a lot of scenarios, including computer/server logins and web services. Even if other forms of authentication are already being widely use (hardware token devices and one-time passwords in banking; biometrics in smartphones), those applications still depend on passwords either as a fallback system (a smartphone will ask the user for a pin/password if the fingerprint recognition failed) or as a complementary security measure (to generate a one-time password, the user must first enter a regular password).
+The answer to the first question is pretty straightforward. Yes. Passwords are, to the date, the dominant form of authentication in a lot of scenarios, including computer/server logins and web services. 
+
+Password managers are the recommended option for password keeping since they allow to securely store a virtually infinite amount of strong passwords, all different from each other, a task an average person is not able to do.
+
+Hardware-based managers use a two-factor authentication method, in which the user needs to prove their identity by connecting a unique and portable device to the host machine and entering a master password. In software-based approaches only the master password is required, making them less secure.
+
+\vspace{8pt}
+\noindent
+The following paragraphs elaborate in the previous answers.
+
+\vspace{6pt}
+Passwords, as the primary form of authentication in many fields, need to be protected. Even if other forms of authentication are already being widely use (hardware token devices and one-time passwords in banking; biometrics in smartphones), those applications still depend on passwords either as a fallback system (a smartphone will ask the user for a pin/password if the fingerprint recognition failed) or as a complementary security measure (to generate a one-time password, the user must first enter a regular password).
 
 Unauthorized access to computers or smartphones, a web service, banking information or company servers, all can have catastrophic consequences for victims. Personal data such as photos and emails, intellectual properties, money and even somebody’s identity are just a few examples of what authentication systems are protecting, reasons more than enough to be concerned about the reliability of passwords.
 
-\newpage
 
 Because passwords use is omnipresent, one would expect it to be a highly secure authentication method. This however, is in general not true. Since people have a large an increasing number of passwords that have to be memorized, they tend to use ones that are not strong but rather, easy to remember. The three most common bad practices are:
 \begin{itemize}
@@ -51,15 +62,15 @@ The desktop application, named SEcubeWallet, was written in C/C++ and Qt, and it
 \item Suggest strong Passwords (and Passphrases) which can be used with confidence in any login service. The application also verifies the entropy (strength measure) of the generated passwords, or of the ones provided by the user.
 \end{itemize}
 
-\newpage
 
 The remaining of the thesis is organized as follows: 
 
-Chapter \ref{chap:related} gives an overview of some existent hardware-based password managers and of other applications based on the SEcube™ framework. 
+Chapter \ref{chap:related} gives an overview of some existent hardware-based password managers, as well as of some applications based on the SEcube™ framework. 
 
-In Chapter \ref{chap:dev} the application development process is explained, by covering its general design, the hardware and software libraries used, and the actual implementation showing also relevant portions of code. 
+In chapter \ref{chap:lib} the hardware and software libraries, tools and IDEs used in the development of the application are reviewed.
 
-Chapter 
+In chapter \ref{chap:dev} the application development process is explained, by first covering its general design and then going into the details of the actual implementation, showing also relevant portions of code. 
 
+In chapter \ref{chap:res} the results obtained in this work, the problems faced during development and ideas for future improvements are given.
 
-
+Finally, chapter \ref{chap:con} concludes this work with a critical review of the achieved results and knowledge, and examines the importance of the subject studied here.

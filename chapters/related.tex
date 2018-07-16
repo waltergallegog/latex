@@ -3,7 +3,7 @@
 This chapter gives a review of a few projects that are related to this work. The first section deals with projects that have as objective the securing of passwords using a hardware approach. The second section regards applications using the SEcube™ framework.
 
 \section {Hardware Password Wallets}
-Over the last decade, ... 
+Over the last decade the security field saw an increase in the interest for more reliable password managers. This led to the conception and development of a multitude of hardware Password Wallets projects, most of them starting as crowfunding projects in websites like kickstarter and crowdsupply. A few examples of this projects are Pastilda \cite{pasti}, Sidekick \cite{side}, Signet \cite{signet},  YubiKey and Mooltipass. These last two projects are explained in details as they are the most mature and interesting for this work.
 
 
 \subsection{YubiKey}
@@ -85,7 +85,7 @@ Its use is very, simple, as explained in their official website \cite{mooltipass
 \item If you are not using the browser plugin or are logging in on something other than a browser, you can tell the Mooltipass to type your logins and passwords for you, just like a keyboard.
 \end{enumerate}
 
-The Mooltipass emulates a standard USB keyboard, and can therefore type your passwords for you on Windows, Linux, Mac and even most Apple and Android devices (through the USB On-The-Go port). It doesn't need any special drivers to function. ''
+The Mooltipass emulates a standard USB keyboard, and can therefore type your passwords for you on Windows, Linux, Mac and even most Apple and Android devices (through the USB On-The-Go port). It doesn't need any special drivers to function.''
 
 The browser plugins offer a GUI where the user see and manage their passwords, as shown in Figure \ref{fig:mpapp}
 
@@ -135,7 +135,9 @@ In conclusion, mooltipass is a mature project that follows the same idea develop
 \item SEcubeWallet offers a couple of additional functionalities: Strong Password generation and entropy estimation, increasing the user experience.
 \end{enumerate}
 
-\section{SEcube™ based applications}
+\section{SEcube™ based applications} \label{sec:relsecube}
+
+The SEcube™ Open SDK available at \cite{SEcubeRes} is a set of libraries, for both the SEcube™ device and the host machine. These libraries include low-abstraction level communication and security functions, as well as high level demos and applications built in top of them.
 
 Before starting the application development, the following three projects were studied in order to familiarize with the SEcube™ framework and libraries usage. All of the projects make part of the SEfile SDK available at \cite{SEcubeRes} and are covered in details in the L2 user Manual \cite{L2UserMan}.
 
@@ -156,9 +158,9 @@ Figure \ref{fig:sefiledem} depicts these two demo applications.
 
 \begin{figure}[ht]
   \centering
-  \subfloat[SEfile\_TXT demo application\label{}]{\includegraphics[width=0.48\textwidth]{chapters/figures/related/sefiletxt.png}}
+  \subfloat[SEfile\_TXT demo application]{\includegraphics[width=0.48\textwidth]{chapters/figures/related/sefiletxt.png}}
   {}
-  \subfloat[SEfile\_IMG\label{}]{\includegraphics[width=0.48\textwidth]{chapters/figures/related/sefileimg.png}}
+  \subfloat[SEfile\_IMG]{\includegraphics[width=0.48\textwidth]{chapters/figures/related/sefileimg.png}}
   \caption{SEfile demo applications}
  \label{fig:sefiledem}
 \end{figure}
@@ -167,7 +169,7 @@ These two demo applications were used to learn the basis of the SEcube™ librar
 
 \subsection{secureSQLiteBrowser}
 
-This application integrates the SEcube™ secureSQLite library with the DB Browser for SQLite\cite{SQLitebro} project, resulting in a powerful manager of encrypted SQLite databases.
+This application integrates the SEcube™ secureSQLite library with the DB Browser for SQLite \cite{SQLitebro} project, resulting in a powerful manager of encrypted SQLite databases.
 
 The secureSQLite library, that makes part of the SEfile SDK, modifies the SQLite system to use the SEfile library in order to manage files, rather than using directly the OS calls. The result is a library that accepts all the standard SQLite commands, but stores the database as an encrypted file.
 

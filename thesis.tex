@@ -32,6 +32,7 @@
 %%%%%%%
  \documentclass[%
     corpo=13pt,
+%    cucitura,
     twoside,
 %    stile=classica,
     oldstyle,
@@ -53,8 +54,8 @@
 
 % modifications by Walter Gallego
 
-\usepackage{todonotes}
-%\usepackage[disable]{todonotes}
+%\usepackage{todonotes}
+\usepackage[disable]{todonotes}
 \usepackage{url}
 \usepackage{hyperref}
 \usepackage{subfig}
@@ -435,10 +436,10 @@ In conclusion, SEcubeWallet is an excellent application for the storing and mana
 
 % \paginavuota % funziona anche senza specificare l'opzione classica
 
-\ringraziamenti
-The author thanks profusely Dr. Giussepe..
+%\ringraziamenti
+%The author thanks profusely Dr. Giussepe..
 %TODO
-\todo{check acknowl}
+\todo{check acknowl, dr Varriale, the lesson and help with login}
 
 \indici
 
@@ -450,8 +451,10 @@ The author thanks profusely Dr. Giussepe..
 
 \input{./chapters/introduction}
 \input{./chapters/related}
+\input{./chapters/frameworks}
 \input{./chapters/development}
 \input{./chapters/results}
+\input{./chapters/conclusions}
 
 \bibliographystyle{acm}
 \bibliography{references}
