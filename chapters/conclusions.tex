@@ -1,2 +1,23 @@
 \chapter{Conclusions} \label{chap:con}
 
+The followed approach and the chosen set of hardware and software libraries proved to be more than appropriate for the implementation of a secure hardware-based password manager.
+
+\vspace{7pt}
+
+The SEcube™ framework is robust enough to offer all the necessary tools for reliable encryption of data, and the set of custom software libraries allow developers non expert in the subject to design and implement any security related application. A project of this magnitude requires knowledge in several fields, mainly embedded programming, digital security and front end development. The well defined levels of abstraction given by the software libraries allows to easily combine the expertise of a group of developers to create any desired application.
+
+\vspace{7pt}
+
+The use of the Qt library did not led to any shortcomings or compatibility problems. On the contrary because it is C++ based, is an excellent choice for the development of applications making use of embedded devices and C libraries. Additionally, all the high level wrappers hiding low level functions and OS calls result in an easier and less error prone programming, and in a cross-platform application.
+
+\vspace{7pt}
+
+It is important to provide a tool to suggest random passwords, because humans are inherently bad at generating really random information, that guarantees the security of the protected system. However, to increase the user experience, it is also desired to have the possibility of less-random more memorable passwords. It is equally important to check the validity of said passwords by using an appropriate metric, for instance their entropy, because even random generated passwords can end up being too guessable
+
+\vspace{7pt}
+
+All the used libraries in this project are open source, proving it is possible to achieve a high level of security with the use of software and hardware open tools. The biggest concern customers have when choosing a new security related product is whether or not they can trust the designers, both in their ethics and in their knowledge. Using open source platforms solve this issue, as it allows the community to critically review the products for accidental or intentional security flaws. There are already in the market similar products to SEcubeWallet in terms of purpose, but none of them offers the combination of a completely open source hardware and software, and the reliability of a mature and tested framework as the SEcube™.
+
+\vspace{7pt}
+
+The developed application still lacks some features to be considered a truly commercial product. Among them, the support for other authorization standards (One Time Passwords, FIDO U2F) already offered by other hardware password managers. Moreover, security can not be the only goal, as users also look for the product offering the most comfortable experience, and want the transition from software to hardware managers to be as seamless as possible. So ideally, all the features already offered by software managers should also be supported. A first step in this direction is the possibility to auto complete login forms in websites without compromising the security of the system.
