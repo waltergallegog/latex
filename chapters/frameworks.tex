@@ -1,6 +1,6 @@
 \chapter{Frameworks, Libraries and software tools} \label{chap:lib}
 
-As explained previously, the core of the design is the use of the SEcube™ chip as device to perform security operations in order to encrypt/decrypt some data stored in the host (PC). The requests to the device are made from the C/C++/Qt application developed in this work, which runs in the host machine. Said application exploits the existing C libraries SEfile and secureSQLite from the SEcube™ framework to ease the communication with the device. The chip firmware, written in C, is done using the Eclipse IDE. Additionally, the application uses of the random password generator PwGen and the password strength estimator zxcvbn, both of them open source libraries. A passphrase generator function was also developed and to keep some order it is treated as a library.
+As explained previously, the core of the design is the use of the SEcube™ chip as device to perform security operations in order to encrypt/decrypt some data stored in the host (PC). The requests to the device are made from the C/C++/Qt application developed in this work, which runs in the host machine. Said application exploits the existing C libraries SEfile and secureSQLite from the SEcube™ framework to ease the communication with the device. The chip's firmware, written in C, can be modified using the Eclipse IDE. Additionally, the application uses the random password generator PwGen and the password strength estimator zxcvbn, both of them open source libraries. A passphrase generator function was developed and from a conceptual point of view, it is treated as a library.
 
 In the following sections a review of the SEcube™ platform's hardware and software components is given. Then a brief explanation of the C/C++/Qt framework and why it was chosen. Finally the additional software tools and libraries are presented.
 
@@ -15,10 +15,10 @@ The main \textbf{hardware} products, explained in detail in the following sectio
 \setlength\itemsep{0pt}
 \item The Chip, named SEcube™ Chip, or simply \textbf{SEcube™}
 \item The Development Board, named \textbf{SEcube™ DevKit}
-\item The USB Stick, named \textbf{USEcube Stick}.
+\item The USB Stick, named \textbf{USEcube™ Stick}.
 \end{itemize}
 
-The SEcube™ chip is the main hardware component, and both the devkit and USB Stick are designed around it.The Development Board provides several communication protocols as well as debugging capabilities. For the final product the board would be of course too inconvenient to carry, and instead the USEcube Stick is preferred.
+The SEcube™ chip is the main hardware component, and both the devkit and USB Stick are designed around it. The Development Board provides several communication protocols as well as debugging capabilities. For the final product the board would be of course too inconvenient to carry, and instead the USEcube™ Stick is preferred.
 
 \subsection{The SEcube™ Chip}
 
@@ -28,17 +28,13 @@ floating-point Cortex-M4 \textbf{CPU}, a high-performance \textbf{FPGA} and an
 EAL5+ certified Security Controller (\textbf{Smart Card}).
 The result of this innovative combination gives an extremely
 versatile secure environment in a single SoC, in which developers
-can rapidly implement complex applications and appliances.
-... The SEcube™ is the ultimate solution for high-end design,
+can rapidly implement complex applications and appliances\dots The SEcube™ is the ultimate solution for high-end design,
 delivering integration of a flexible, configurable and certified
 secure element.'' \cite{SEcubeDS}
 
 We can then see the SEcube™ chip as a powerful device offering the flexibility of an \textsc{ARM} CPU, the speed of an FPGA and the reliable security of a certified Smart Card, all bounded together and easily integrated in any project thanks to the available communication protocols, among them USB, UART, Ethernet and JTAG. 
 
 The chip includes a true random number generator which relies in 240 noise seeds, all physical and therefore unpredictable. This allows the creation of true random noise. Additionally the user can choose what type of noise they want to generate, for instance white or Fourier noise.
-
-%TODO
-\todo{talk more about cpu, low power modes...}
 
 In figure \ref{fig:SEcubeBD} a simplified SEcube™ architecture is shown.
 
@@ -52,7 +48,7 @@ In figure \ref{fig:SEcubeBD} a simplified SEcube™ architecture is shown.
 
 \subsection{Development board: The SEcube™ DevKit}
 
-The development board integrates the SEcube™ chip with several peripherals that allow the user to easily communicate, program and debug. (Figure \ref{fig:devboard})
+The development board integrates the SEcube™ chip with several peripherals that allow the user to easily communicate with, program and debug the chip. (Figure \ref{fig:devboard})
 
 \begin{figure}[ht]
   \centering
@@ -77,19 +73,19 @@ The main peripherals in the SEcube™ devkit are:
 \item \textbf{SWx00y:}\tabto{2.3cm} Switches 
 \end{itemize}
 
-\subsection{Final product: USEcube Stick}
+\subsection{Final product: USEcube™ Stick}
 
-For the final product, its is desired that the user carries all the SEcube™ functionalities in a small and convenient package, so they can encrypt/decrypt the passwords in any PC by just connecting the USEcube Stick and running the SEcubeWallet application.
+For the final product, its is desired that the user carries all the SEcube™ functionalities in a small and convenient package, so they can encrypt/decrypt the passwords in any PC by just connecting the USEcube™ Stick and running the SEcubeWallet application.
 
-The USEcube Stick is compatible with any Operating System and the SEcube™ functionalities are easily exposed to applications and services without installing any driver.
+The USEcube™ Stick is compatible with any Operating System and the SEcube™ functionalities are easily exposed to applications and services without installing any driver.
 
-The USEcube offers only the strictly required components: The SEcube™ chip, a USB 2.0 High-Speed interface and an SDcard socket. See Figure \ref{fig:USEcube} for more details.
+The USEcube™ offers only the strictly required components: The SEcube™ chip, a USB 2.0 High-Speed interface and an SDcard socket. See Figure \ref{fig:USEcube} for more details.
 
 
-Since the USEcube Stick storage capability is based on a external microSD card, the security of the system is improved, as this allows to have a separation of encrypted data from the encryptor/decryptor. Additionally, both the size and the speed can be tuned per the user requirement and can be changed at any time, just replacing the microSD, without buying a new USEcube Stick.
-The microSD card socket is embedded in the USB connector allowing to save space making the USEcube Stick very compact and, at the same time dust
+Since the USEcube™ Stick storage capability is based on a external microSD card, the security of the system is improved, as this allows to have a separation of encrypted data from the encryptor/decryptor. Additionally, both the size and the speed can be tuned by the user's requirement and can be changed at any time, just replacing the microSD, without buying a new USEcube™ Stick.
+The microSD card socket is embedded in the USB connector allowing to save space making the USEcube™ stick very compact and, at the same time dust
 and water-resistant.
-Since the USEcube Stick is not provided with the JTAG interface, to inject the firmware previously developed and tested on the SEcube™ DevKit, all the devices come with an embedded secure boot loader.
+Since the USEcube™ Stick is not provided with the JTAG interface, to inject the firmware previously developed and tested on the SEcube™ DevKit, all the devices come with an embedded secure boot loader.
 
 
 \begin{figure}[ht]

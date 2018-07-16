@@ -3,14 +3,14 @@
 This chapter gives a review of a few projects that are related to this work. The first section deals with projects that have as objective the securing of passwords using a hardware approach. The second section regards applications using the SEcube™ framework.
 
 \section {Hardware Password Wallets}
-Over the last decade the security field saw an increase in the interest for more reliable password managers. This led to the conception and development of a multitude of hardware Password Wallets projects, most of them starting as crowfunding projects in websites like kickstarter and crowdsupply. A few examples of this projects are Pastilda \cite{pasti}, Sidekick \cite{side}, Signet \cite{signet},  YubiKey and Mooltipass. These last two projects are explained in details as they are the most mature and interesting for this work.
+Over the last decade the security field saw an increase in the interest for more reliable password managers. This led to the conception and development of a handful of hardware based password wallets, most of them starting as crowfunding projects in websites like kickstarter and crowdsupply. A few examples of this projects are Pastilda \cite{pasti}, Sidekick \cite{side}, Signet \cite{signet},  YubiKey and Mooltipass. These last two projects are explained in details as they are the most mature and interesting for this work.
 
 
 \subsection{YubiKey}
 
 YubiKey is a family of hardware authentication devices developed by Yubico \cite{yubi}. The members in the family differ in several aspects including the communication protocol they support (\textsc{usb-a}, \textsc{usb-c}, \textsc{nfc}), the security services provided (Smart card, One time password, etc.), or the intended use (for desktop or mobile, for regular users or government). This review does not go into the details of each device, but rather it gives a general overview of the provided security services. 
 
-``A single YubiKey has multiple functions for protecting access to your email, your apps and your physical spaces. Use one or more YubiKey features, or use them all. The versatile YubiKey does not require software installation or a battery; just plug it into a USB port, and touch the button for secure and strong authentication \ldots  Even if someone steals your username and password (which is happening in bunches lately) they can’t get into your account without your physical key.''\cite{yubiworks}
+``A single YubiKey has multiple functions for protecting access to your email, your apps and your physical spaces. Use one or more YubiKey features, or use them all. The versatile YubiKey does not require software installation or a battery; just plug it into a USB port, and touch the button for secure and strong authentication \ldots  Even if someone steals your username and password (which is happening in bunches lately) they can’t get into your account without your physical key.'' \cite{yubiworks}
 
 Figure \ref{fig:yubi} depicts some members of the YubiKey family.
 
@@ -39,7 +39,7 @@ The YubiKey generates a six or eight character time-based one-time password (OTP
 \textbf{Challenge and Response (HMAC-SHA1, Yubico OTP): }
 The Challenge Response method is best suited for offline validations. Used for Windows, Mac, and Linux computer login.
 
-\vspace{10pt}
+\vspace{8pt}
 
 All of the previous features are available on every version of YubiKey except the U2F Security Key.
 
@@ -143,18 +143,16 @@ Before starting the application development, the following three projects were s
 
 \subsection{Secure Text Editor and Secure Image Viewer}
 
-This two projects are very similar, both use the SEcube™ framework, in particular the \texttt{SEfile} library, to encrypt/decrypt plain text files and images respectively. They are not intended to be final user applications, but demos that allow developers to learn how to use the SEcube™ libraries.
+This two projects are very similar, both use the SEcube™ framework, in particular the SEfile library, to encrypt/decrypt plain text files and images respectively. They are not intended to be final user applications, but demos that allow developers to learn how to use the SEcube™ libraries.
 
 ``Both these two projects have been developed in C++ with Qt libraries. They are based on 3
-major security classes, in a one-to-one mapping with the 3 most important security opera-
-tions: the first one manages the security platform to which the user wants to log in, the sec-
-ond one allows the selection of the secure environment through the \texttt{secure\_update()} function, while the third one manages the opening and creation of files resorting on the \texttt{secure\_ls()}.''\citep{L2UserMan}.
+major security classes, in a one-to-one mapping with the 3 most important security operations: the first one manages the security platform to which the user wants to log in, the second one allows the selection of the secure environment through the \texttt{secure\_update()} function, while the third one manages the opening and creation of files resorting on the \texttt{secure\_ls()}.''\citep{L2UserMan}.
 
-The secure text editor, in short \texttt{SEfile\_TXT} offers the possibility to create/edit/open plain text documents, and generate an encrypted version of the file that will be stored in the same directory. ``It is possible to verify that encrypted files cannot be read properly from regular text editors; conversely, the Secure Text Editor can transparently read any encrypted file (decrypting also the file name) which content has not been altered and is, thus, trusted. Unauthenticated content (i.e., content not corresponding to the file signature) is, instead, discarded''.
+The secure text editor, in short SEfile\_TXT offers the possibility to create/edit/open plain text documents, and generate an encrypted version of the file that will be stored in the same directory. ``It is possible to verify that encrypted files cannot be read properly from regular text editors; conversely, the Secure Text Editor can transparently read any encrypted file (decrypting also the file name) which content has not been altered and is, thus, trusted. Unauthenticated content (i.e., content not corresponding to the file signature) is, instead, discarded''.
 
-The secure image viewer, in short \texttt{SEfile\_IMG} allows the user to open the most common image formats, PNG JPG/JPEG and BMP, and generates the encrypted version, which can only be opened using the same application.
+The secure image viewer, in short SEfile\_IMG allows the user to open the most common image formats, png, jpg/jpeg and bmp, and generates the encrypted version, which can only be opened using the same application.
 
-Figure \ref{fig:sefiledem} depicts these two demo applications.
+Figure \ref{fig:sefiledem} depicts the GUI of SEfile\_TXT and SEfile\_IMG.
 
 \begin{figure}[ht]
   \centering
@@ -175,7 +173,7 @@ The secureSQLite library, that makes part of the SEfile SDK, modifies the SQLite
 
 DB Browser for SQLite is an application developed in Qt that allows to manage SQLite DB from a powerful GUI. ``DB Browser for SQLite is a high quality, visual, open source tool to create, design, and edit database files compatible with SQLite. It is for users and developers wanting to create databases, search, and edit data. It uses a familiar spreadsheet-like interface, and you don't need to learn complicated SQL commands.'' \cite{SQLitebro}
 
-By merging this two projects, the result is a wonderful application to create encrypted SQLite databases using an elegant and powerful GUI, depicted in figure \ref{fig:sqlitebro}, with tons of options, where the users can visually edit the DB tables, and store them as SEcube™ secured files. 
+By merging this two projects, the result is an excellent application to create encrypted SQLite databases using an elegant and powerful GUI, depicted in figure \ref{fig:sqlitebro}, with tons of options, where the users can visually edit the DB tables, and store them as SEcube™ secured files. 
 
 \begin{figure}[htb]
   \centering
@@ -185,4 +183,6 @@ By merging this two projects, the result is a wonderful application to create en
   \label{fig:sqlitebro}
 \end{figure}
 
-Because SEcubeWallet is heavily based on the use of the secureSQLite library, this application was used to learn how to integrate the library into a Qt project. Additionally, it was used as inspiration for some of the GUI elements, like the filters above each column and the use of menus and toolbars. It was also use to diagnose the SEcubeWallet in the developing stage, by creating a DB with one application and opening it in the other. secureSQLiteBrowser could be use as a password manager in the sense that it can securely store and display wallets as tables, but it lacks the simplicity and additional functionalities that make SEcubeWallet attractive to users.
+Because SEcubeWallet is heavily based on the use of the secureSQLite library, this application was used to learn how to integrate the library into a Qt project. Additionally, it was used as inspiration for some of the GUI elements, like the filters above each column and the use of menus and toolbars. It was also use to diagnose the SEcubeWallet in the developing stage, by creating a DB with one application and opening it in the other. 
+
+secureSQLiteBrowser could be use as a password manager in the sense that it can securely store and display wallets as tables, but it lacks the simplicity and additional functionalities that make SEcubeWallet attractive to users.

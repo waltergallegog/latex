@@ -1,6 +1,6 @@
 \chapter{Introduction}
 
-This work of Thesis deals with the design and development of a hardware-based password manager system. The need to work on such a topic can be explained by trying answering to the following questions
+This work of Thesis deals with the design and development of a hardware-based password manager system. The need to work on such a topic can be explained by trying to answer the following questions
 
 \begin{itemize}
 \setlength\itemsep{-3pt}
@@ -11,7 +11,7 @@ This work of Thesis deals with the design and development of a hardware-based pa
 
 The answer to the first question is pretty straightforward. Yes. Passwords are, to the date, the dominant form of authentication in a lot of scenarios, including computer/server logins and web services. 
 
-Password managers are the recommended option for password keeping since they allow to securely store a virtually infinite amount of strong passwords, all different from each other, a task an average person is not able to do.
+Password managers are the recommended option for password keeping since they allow to securely store a virtually infinite amount of strong passwords, all different from each other, a task an average person is not able to do on its own.
 
 Hardware-based managers use a two-factor authentication method, in which the user needs to prove their identity by connecting a unique and portable device to the host machine and entering a master password. In software-based approaches only the master password is required, making them less secure.
 
@@ -20,7 +20,7 @@ Hardware-based managers use a two-factor authentication method, in which the use
 The following paragraphs elaborate in the previous answers.
 
 \vspace{6pt}
-Passwords, as the primary form of authentication in many fields, need to be protected. Even if other forms of authentication are already being widely use (hardware token devices and one-time passwords in banking; biometrics in smartphones), those applications still depend on passwords either as a fallback system (a smartphone will ask the user for a pin/password if the fingerprint recognition failed) or as a complementary security measure (to generate a one-time password, the user must first enter a regular password).
+Passwords, as the primary form of authentication in many fields, need to be protected. Even if other forms of authentication are already being widely use (hardware token devices and one-time passwords in banking; biometrics in smartphones), those applications still depend on passwords either as a fallback system (a smartphone will ask the user for a pin/password if the fingerprint recognition failed) or as a complementary security measure (to generate a one-time password, the user must enter first a regular password).
 
 Unauthorized access to computers or smartphones, a web service, banking information or company servers, all can have catastrophic consequences for victims. Personal data such as photos and emails, intellectual properties, money and even somebody’s identity are just a few examples of what authentication systems are protecting, reasons more than enough to be concerned about the reliability of passwords.
 
@@ -33,7 +33,7 @@ Because passwords use is omnipresent, one would expect it to be a highly secure 
 \item Reusing the same password for multiple services, with small modifications or non at all.
 \end{itemize}
 
-With password managers the story is different. People no longer need to worry about remembering their passwords, managers will do that for them. Usually they also offer the capability to generate long, complex and completely random passwords. As a result, people can use a strong and unique password for each of their accounts, thus making attackers job infinitely harder.
+With password managers the story is different. People no longer need to worry about remembering their passwords, managers will do that for them. Usually they also offer the capability to generate long, complex and completely random passwords. As a result, people can use a strong and unique password for each of their accounts, thus making eventually attackers' job infinitely harder.
 
 \vspace{15pt}
 
@@ -52,7 +52,7 @@ A hardware-based manager uses a two-factor authentication method. In order to en
 Regarding the second point, in a lot of cases the portable device is the one doing all the actual encryption/decryption of data. The host machine is only used to provide the GUI so the user can enter their master password and to display their protected passwords. As the portable device is custom designed to be as secure as possible, it is much more harder to corrupt than an OS or a software application.
 
 \vspace{10pt}
-In conclusion, storing and protecting passwords is a major goal in digital security, and one of the best approaches to the date are hardware-based managers. This work regards one of them, implemented as a desktop application that exploits the capabilities of the SEcube™ (Secure Environment cube) hardware and software framework. The core of the framework is the SEcube™ chip developed by the Blu5 Group\citep{Blu5}, which integrates three key security elements in a single package: A fast floating-point Cortex-M4 CPU, a high-performance FPGA and an EAL5+ certified Security Controller (Smart Card). This chip, in conjunction with a set of custom device-side software libraries\cite{SEcubeRes} developed by European research institutions, act as the password manager's hardware device, and is in charge of authenticating the user and encrypting/decrypting the data.
+In conclusion, storing and protecting passwords is a major goal in digital security, and one of the best approaches to the date are hardware-based managers. This work regards one of them, implemented as a desktop application that exploits the capabilities of the SEcube™ (Secure Environment cube) hardware and software framework. The core of the framework is the SEcube™ chip developed by the Blu5 Group\citep{Blu5}, which integrates three key security elements in a single package: A fast floating-point Cortex-M4 CPU, a high-performance FPGA and an EAL5+ certified Security Controller (Smart Card). This chip, in conjunction with a set of custom device-side software libraries \cite{SEcubeRes} developed by European research institutions, act as the password manager's hardware device, and is in charge of authenticating the user and encrypting/decrypting the data.
 
 The desktop application, named SEcubeWallet, was written in C/C++ and Qt, and it interacts with the SEcube™ device, requesting services like authentication and encryption. Its main tasks are:
 \begin{itemize}
