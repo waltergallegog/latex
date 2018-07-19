@@ -98,7 +98,7 @@ Since the USEcube™ Stick is not provided with the JTAG interface, to inject th
 
 \subsection{SEcube™ Open SDK}
 
-The SEcube™ Open SDK available at \cite{SEcubeRes} is a set of libraries, for both the SEcube™ device and the host machine. In general, the user interacts with the host libraries requesting security services. The host in turn pass those request to the device libraries, which are the ones that actually execute any security algorithms. The results are passed back to the host and ultimately to the user.
+The SEcube™ Open SDK available at \cite{SEcubeRes} is a set of libraries, for both the SEcube™ device and the host machine. In general, the user interacts with the host libraries requesting security services. The host in turn pass those requests to the device libraries, which are the ones to actually execute any security algorithms. The results are passed back to the host and ultimately to the user.
 
 ``The software libraries and design environment allow developers who are not willing or able to produce the security APIs and protocols themselves to exploit the ready functions provided (currently as APIs and soon as services) within the SEcube™ platform and experience the platform as a high-security black box.'' \cite{L2UserMan}
 
@@ -106,11 +106,11 @@ The SEcube™ Open SDK available at \cite{SEcubeRes} is a set of libraries, for 
 nested environments depending on where physically the code runs:
 \begin{itemize}
 \setlength\itemsep{1pt}
-\item \textbf{Device-Side}, including the libraries of basic functionalities that are executed on the embedded processor of the SEcube™-based hardware device.
+\item \textbf{Device-Side}, including the libraries of basic functionalities that are executed on the embedded processor of the SEcube™ based hardware device.
 \item \textbf{Host-Side}, containing libraries of functions executed on the host PC and interface functions for calling services and processes residing on the embedded processor of the SEcube™ device.
 \end{itemize} 
 
-From the architectural point of view, the Host-Side Libraries have been implemented targeting 4 hierarchical abstraction levels, and namely:
+From the architectural point of view, the Host-Side Libraries have been implemented targeting 4 hierarchical abstraction levels, namely:
 \begin{itemize}
 \setlength\itemsep{-3pt}
 \item \textbf{Level 0:} Communication Protocol and Provisioning APIs
@@ -123,7 +123,7 @@ At each level, each component represents a "service" for the upper level and rel
 
 The Device-Side Libraries only have the lower two levels of abstraction, and each of these levels communicates with its host-side counterpart.
 
-In Figure \ref{fig:levels} a graphical representation of the hierarchical levels is presented. For each level is shown, in parenthesis, an example of a function/application belonging to it.
+In Figure \ref{fig:levels} a graphical representation of the hierarchical levels is presented. For each level, an example of a function/application belonging to it is shown.
 
 \begin{figure}[htb]
   \centering
@@ -173,7 +173,7 @@ Every database created with secureSQLite is cyphered and signed up to its file n
 \section{SQLite Data Base management system}
 A Data Base is a structured set of data stored and accessed electronically using a data base management system. 
 
-SQLite \cite{SQLite} is one of such management systems. It implements most of the SQL (Structured Query Language) standard. Unlike most other SQL databases, it is serverless, meaning there is not separate server process, and an application can access directly the database file without the need of interprocess communication. SQLite is ACID (Atomicity, Consistency, Isolation, Durability) compliant, meaning database transactions are valid even in case of errors, leading to program crashes, OS crashes or power failures. It can run in any operating system, even embedded ones. SQLite is implemented in generic C, and it is self-contained in a C library, meaning it has very few dependencies and all the code is encapsulated single source code file. 
+SQLite \cite{SQLite} is one of such management systems. It implements most of the SQL (Structured Query Language) standard. Unlike most other SQL databases, it is serverless, meaning there is not separate server process, and an application can access directly the database file without the need of interprocess communication. SQLite is ACID (Atomicity, Consistency, Isolation, Durability) compliant, meaning database transactions are valid even in case of errors produced by program crashes, OS crashes or power failures. It can run in any operating system, even embedded ones. SQLite is implemented in generic C, and it is self-contained in a C library, meaning it has very few dependencies and all the code is encapsulated single source code file. 
 
 In this work the Qt SQLite plugin was used to manage the in-memory SQLite databases. ``The Qt SQLite plugin makes it possible to access SQLite databases\dots SQLite operates on a single file, which must be set as the database name when opening a connection. If the file does not exist, SQLite will try to create it. SQLite also supports in-memory and temporary databases. Simply pass respectively ":memory:" or an empty string as the database name.'' \cite{qsqlite}.
 
@@ -234,11 +234,11 @@ The Getting Started guide does a very good job explaining in detail how to insta
 
 \item \textbf{Eclipse:} Eclipse for C/C++, Neon version was used. Available at \cite{eclipse}
 
-\item \textbf{AC6 Tools Eclipse Plugin: }  Embedded Toolchain for ARM, which includes the building tools (GCC-based ARM cross compiler, assembler and linker), OpenOCD (Open On-Chip Debugger) and GDB debugging tools. In Linux, OpenOCD allows the communication with the STLink-V2 and therefore, the debugging. Available at \cite{ac6}.
+\item \textbf{AC6 Tools Eclipse Plugin: }Embedded Toolchain for ARM, which includes the building tools (GCC-based ARM cross compiler, assembler and linker), OpenOCD (Open On-Chip Debugger) and GDB debugging tools. In Linux, OpenOCD allows the communication with the STLink-V2 and therefore, the debugging. Available at \cite{ac6}.
 
 \item \textbf{STM32CubeMX: }This is a STM32Cube initialization code generator that includes standard toolchains and embedded software libraries and middleware components (e.g., Open-source TCP/IP stack, USB drivers, open-source FAT file system, open source RTOS). Available at \cite{cubemx}.
 
-\item \textbf{udev rules (Linux Only): }On Linux, it is required to include the STLink-v2 device rules in the udev device manager. To do so, instead of writing them manually it is easier to use the rules already generated in the mcu-gnu-eclipse version of openocd available in \cite{mcu}. After downloading the appropriate version (*centos64.tgz for a 64 bits Linux machine), the \texttt{.tgz} file is extracted and the \texttt{60-openocd.rules} file copied into the \texttt{rules.d/} directory using the commands in listing \ref{lis:udev}:
+\item \textbf{udev rules (Linux Only): }On Linux, it is required to include the ST-Link/V2 device rules in the udev device manager. To do so, instead of writing them manually it is easier to use the rules already generated in the mcu-gnu-eclipse version of openocd available in \cite{mcu}. After downloading the appropriate version (*centos64.tgz for a 64 bits Linux machine), the \texttt{.tgz} file is extracted and the \texttt{60-openocd.rules} file copied into the \texttt{rules.d/} directory using the commands in listing \ref{lis:udev}:
 
 \begin{lstlisting}[float=htb, basicstyle=\ttfamily, frame=tb, caption={Including STLink rules to udev manager in Linux}, label = {lis:udev}]
 sudo cp /gnu-mcu-eclipse/openocd/0.10.0-8-20180512-1921/
@@ -259,11 +259,11 @@ sudo udevadm control --reload-rules
 
 The most secure type of passwords are random ones. A random password sufficiently long is considered to be virtually unbreakable. But this rises two problems: First of all, humans are inherently bad at creating true random passwords. Second, a random password is not suited to be remembered or even used (as it probably is too annoying to type). These two reasons motivated the inclusion of a Password Generator.
 
-pwgen is an open source program that generates human friendly passwords that are also secure. It is available in the official Linux repositories, and there is a Windows version as well, but in this work the source files where used.
+PwGen \cite{pwgen} is an open source program that generates human friendly passwords that are also secure. It is available in the official Linux repositories, and there is a Windows version as well, but in this work the source files where used.
 
 ``The pwgen program generates passwords which are designed to be easily memorized by humans, while being as secure as possible. Human-memorable passwords are never going to be as secure as completely completely random passwords. In particular, passwords generated by pwgen without the -s option should not be used in places where the password could be attacked via an off-line brute-force attack. On the other hand, completely randomly generated passwords have a tendency to be written down, and are subject to being compromised in that fashion'' \cite{pwgen}.
 
-pwgen offers several options that can drastically change the type of generated password. Here is a list of the options available for users of SEcubeWallet:
+PwGen offers several options that can drastically change the type of generated password. Here is a list of the options available for users of SEcubeWallet:
 
 \begin{itemize}
 \setlength\itemsep{0pt}
@@ -298,7 +298,7 @@ Include at least one special character in the password.
 
 By default pwgen behaves as if the options \textbf{-nc} were used, that is, pronounceable passwords with at least 1 capital letter and 1 number.
 
-The strongest passwords this program can generate are obtained with the options \textbf{-ys}, as it results in random passwords with special symbols. They are very hard to remember, and should only be used if the user is willing to open the SEcubeWallet application each time they need to use one of the password.
+The strongest passwords this program can generate are obtained with the options \textbf{-ys}, as it results in random passwords with special symbols, numbers and capital letters (These last two enabled by default). They are very hard to remember, and should only be used if the user is willing to open the SEcubeWallet application each time they need to use one of the passwords.
 
 
 \section{zxcvbn: Password strength estimation} \label{sec:zxcvbnth}
@@ -342,7 +342,7 @@ The table in figure \ref{fig:tablez} (taken from \cite{zxdropbox}), show how zxc
 \item A password like \texttt{\textbf{correcthorsebatterystaple}} is not considered strong by most of the meters except zxcvbn, and it is not even allowed in some cases because it lacks numbers, Upper-cases or symbols.
 \end{enumerate}
 
-The superiority of zxcvbn over the other meters in the table may seem like cherry picking, but the way zxcvbn is constructed explains these differences.
+The superiority of zxcvbn over the other meters in the table may seem like cherry picking, but the way zxcvbn is constructed explains these differences:
 
 \subsubsection*{Matching}
 
@@ -352,20 +352,20 @@ Enumerates all the (possibly overlapping) patterns it can detect. Currently zxcv
 \setlength\itemsep{-3pt}
 
 
-\item \textbf{Dictionaries:} Common words the user is likely to use as password. Multiple dictionaries, in a simple .txt format can be used. In this work, we present a few: English words, Italian words, names and surnames, Burnett’s 10,000 common passwords, words from tv and films. The match has an associated frequency rank, where words like the and good have low rank, and words like photojournalist and maelstrom have high rank. This lets zxcvbn scale the calculation to an appropriate dictionary size on the fly, because if a password contains only common words, a cracker can succeed with a smaller dictionary. For all dictionaries, match recognizes uppercasing and common \texttt{l33t} substitutions.
+\item \textbf{Dictionaries:} Common words the user is likely to use as password. Multiple dictionaries, in a simple .txt format can be used. In this work, we present a few: English words, Italian words, names and surnames, Burnett’s 10,000 common passwords, words from tv and films. The match has an associated frequency rank, where words like 'the' and 'good' have low rank, and words like 'photojournalist' and 'maelstrom' have high one. This lets zxcvbn scale the calculation to an appropriate dictionary size on the fly, because if a password contains only common words, a cracker can succeed with a smaller dictionary. For all dictionaries, match recognizes uppercasing and common \texttt{l33t} substitutions.
 
 \item \textbf{Spatial keyboard patterns:} Some users are likely to choose passwords based on spatial pattern. For instance a user could choose the first row of letters from right to left: \texttt{poiuytrewq} as they password. \textsc{qwerty} keyboard, Dvorak keyboard, and keypad are considered.
 
 \item \textbf{Repeats}: Users are also prone to use repetition of characters, like \texttt{rrrr}. 
 
-\item \textbf{sequences}: Numeric or alphabetic sequences like \texttt{123} or \texttt{fedcba}
+\item \textbf{Sequences}: Numeric or alphabetic sequences like \texttt{123} or \texttt{fedcba}
 
-\item \textbf{years and dates}: The year or full date of a special event, like anniversary or birthday. Years from 1900 to 2019 are considered and dates in different formats. (3-13-1997, 13.3.1997, 1331997). 
+\item \textbf{Years and dates}: The year or full date of a special event, like anniversary or birthday. Years from 1900 to 2019 are considered and dates in different formats. (3-13-1997, 13.3.1997, 1331997). 
 
 \end{itemize}
 
 \subsubsection*{Entropy calculation of a single pattern}
-Depending on the type of matching, the entropy calculation is done differently, but for all the cases the idea is the same: How many different cases a hacker would have to try before guessing the pattern? For example, for the repeat case, if the user chooses \texttt{zzzzz}, as it is repeated five times, and if we assume the hacker starts by the letter a, then the number of cases would be $ N = 26 \times 5 = 130 $. (The sequence the hacker would try is: \texttt{a, b, c, d...,z, aa, bb, cc,...,...,zzzz, aaaaa, bbbbb,....zzzzz}).
+Depending on the type of matching, the entropy calculation is done differently, but for all the cases the idea is the same: How many different cases a hacker would have to try before guessing the pattern? For example, for the repeat case, if the user chooses \texttt{zzzzz}, as it is repeated five times, and if we assume the hacker starts by the letter \texttt{a}, then the number of cases would be $ N = 26 \times 5 = 130 $. (The sequence the hacker would try is: \texttt{a, b, c, d...,z, aa, bb, cc,...,...,zzzz, aaaaa, bbbbb,....zzzzz}).
 
 
 As the number of possible cases can be pretty large, the entropy is not given as a raw value but as $e = log_{2}(N)$, known as the entropy bits, and in some cases as $f = log_{10}(N)$, known as the log entropy. In the example, entropy bits: $e = log_{2}(130) = 7 bits$.
@@ -378,7 +378,7 @@ The entropy bits and log entropy are related by:
 
 \subsubsection*{Minimum entropy search of whole password}
 
-``Given the full set of possibly overlapping matches, the algorithm finds the simplest (lowest entropy) non-overlapping sequence. For example, if the password is damnation, that could be analysed as two words, dam and nation, or as one. It’s important that it be analysed as one, because an attacker trying dictionary words will crack it as one word long before two.
+``Given the full set of possibly overlapping matches, the algorithm finds the simplest (lowest entropy) non-overlapping sequence. For example, if the password is \texttt{damnation}, that could be analysed as two words, \texttt{dam} and \texttt{nation}, or as one. It’s important that it be analysed as one, because an attacker trying dictionary words will crack it as one word long before two.
 
 zxcvbn calculates a password’s entropy to be the sum of its constituent patterns. Any gaps between matched patterns are treated as brute-force "patterns" that also contribute to the total entropy. That a password’s entropy is the sum of its parts is a big assumption. However, it’s a conservative assumption. By disregarding the "configuration entropy" — the entropy from the number and arrangement of the pieces — zxcvbn is purposely underestimating, by giving a password’s structure away for free: It assumes attackers already know the structure (for example, surname-bruteforce-keypad), and from there, it calculates how many guesses they’d need to iterate through.''\cite{zxdropbox}
 
@@ -441,7 +441,7 @@ The PassPhrase generator developed by the author works by randomly picking out w
 
 \item \textbf{Number of words: }The user can configure the number of words the generated PassPhrases are composed of. The recommended size is four, but it can be as long as the user wants.
 
-\item \textbf{Minimum Length of Words: }With this option is possible to select only random words whose length is higher than a certain value. This is to make sure the resulting PassPhrase is too short and therefore too insecure. The drawback here is that the higher the selected threshold, the fewer the available words in the dictionaries.
+\item \textbf{Minimum Length of Words: }With this option is possible to select only random words whose length is higher than a certain value. This is to make sure the resulting PassPhrase is not too short and therefore too insecure. The drawback here is that the higher the selected threshold, the fewer the available words in the dictionaries.
 
 \item \textbf{Only use infrequent words: }If the dictionaries follow the same format as those used for zxcvbn, that is, the words are ordered by frequency, having the most uncommon words in the lower part of the dictionary, the user can then ask to generate PassPhrases containing only unusual words. The drawback here is, again, fewer words to choose from. The percentage of words that are used is configurable.
 

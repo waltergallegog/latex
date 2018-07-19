@@ -1,5 +1,6 @@
 \chapter{Application Development} \label{chap:dev}
 
+In this chapter the actual implementation is explained, by covering the design and general architecture, what is the role of each of the libraries, and how they were used, including relevant commented code.
 %\section{Requirements (and Specifications)}
 %TODO
 \todo{req and spec}
@@ -19,16 +20,16 @@ A simplified design architecture is displayed in figure \ref{fig:BasicDesign}. I
 	\label{fig:BasicDesign}
 \end{figure}
 
-The following is a brief explanation of how this libraries were usaee. More details about each Library and why they were chosen were given in section \ref{chap:lib} and section \ref{sec:imp} deals with the actual implementation.
+The following is a brief explanation of how this libraries were used. More details about each Library and why they were chosen were given in section \ref{chap:lib} and section \ref{sec:imp} deals with the actual implementation.
 
 \subsection{L0 and L1 Authentication libraries}
 
-When the user starts any application based on the SEcube™ platform, the first steps to perform are to open the communication with the device using Level0 functions from both host and device, and to authenticate the user by checking the login pin, using Level1 functions (again, from both sides). Figure \ref{fig:BasicDesign} depicts how the SEcubeWallet uses the authentication functions and they in turn communicate with the SEcube™ chip.
+When the user starts any application based on the SEcube™ platform, the first steps to perform are to open the communication with the device using Level 0 functions from both host and device, and to authenticate the user by checking the login pin, using Level 1 functions (again, from both sides). Figure \ref{fig:BasicDesign} depicts how the SEcubeWallet uses the authentication functions and they in turn communicate with the SEcube™ chip.
 
 \subsection{secureSQLite3}
-As explained before, wallets are managed as SQLite DataBases, that need to be securely stored. Fortunately, the SEcube™ SDK already provides a Level2 API for creating and managing encrypted SQLite DBs, called secureSQLite3 (Available in the SEfile SDK\cite{SEcubeRes}). This API exploits the SEfile API to wrap some of the functions of the original SQLite3 library, avoiding OS calls.
+As explained before, wallets are managed as SQLite DataBases, that need to be securely stored. Fortunately, the SEcube™ SDK library secureSQLite3 already provides the functionality of managing encrypted SQLite DBs.
 
-secureSQLite allows to create/edit/save/open databases that when written to the disk are encrypted and can only be read when the SEcube™ is connected. Additionally, as it is implemented using wrappers, the developer only needs to include the source files in the project and can manage secureSQLite DB with the same functions used for regular SQLite DB.
+secureSQLite is used to create/edit/save/open databases that when written to the disk are encrypted and can only be read when the SEcube™ is connected. As the library is implemented using wrappers, the developer only needs to include the source files in the project and can manage secureSQLite DB with the same functions used for regular SQLite DB.
 
 Figure \ref{fig:BasicDesign} shows the SEcubeWallet application using secureSQLite to read/write the encrypted wallet stored in disk.
 
@@ -42,14 +43,14 @@ With the In-memory DB, the user experience is increased as the application is ve
 \subsection{Password Generator}
 As the purpose of the application is to securely store passwords, said passwords should be as strong as possible. It does not make sense to protect a password that can be easily cracked by a hacker using brute force. That is why the application also includes a Password Generator.
 
-PwGen \cite{pwgen} is an open source library that generates passwords, that can either be easy to remember, or completely random. Random passwords are more secure, but as the are difficult to remember, their use only makes sense when the user stores them in a wallet manager. Among other aspects, length and characters used (Numbers, Upper cases) can be configured too.
+The PwGen \cite{pwgen} open source library is used to generate passwords, that can either be easy to remember, or completely random. Random passwords are more secure, but as the are difficult to remember, their use only makes sense when the user stores them in a wallet manager. Among other aspects, length and characters used (Numbers, Upper cases) can be configured too.
 
 When the user is adding a new entry to a wallet, they can chose to enter a password or to automatically generate one.
 
 \subsection{PassPhrase Generator}
 In addition to the Password Generator PwGen, the user has the possibility to generate PassPhrases instead. PassPhrases are a popular alternative because they are easier to memorize and therefore can be longer, which in turns make them more secure. Further details about the usefulness of PassPhrases and how they compare against regular Passwords were given in section \ref{sec:zxcvbnth}.
 
-Although the PassPhrase Generator is not a library per se, it was included in the diagram because of its close relation with the PwGen and zxcvbn \cite{zxgit} libraries. It was developed by the author, and it works by selecting random words out of dictionary files. 
+Although the PassPhrase Generator is not a library per se, it was included in the diagram because of its close relation with the PwGen and zxcvbn libraries. It was developed by the author, and it works by selecting random words out of dictionary files. 
 
 The user can configure how many words each passphrase must have, the minimum length of said words, and which dictionary files to use, among other options.
 
@@ -64,8 +65,8 @@ To recap what has been explained in previous sections, these are the key aspects
 \begin{itemize}
 \setlength\itemsep{0pt}
 
-\item To start the connection with the SEcube™, the Level0 library is used
-\item To authenticate the user, by checking if the entered login pin is the same as the pin stored in the SEcube™, the Level1 library is used.
+\item To start the connection with the SEcube™, the Level 0 library is used
+\item To authenticate the user, by checking if the entered login pin is the same as the pin stored in the SEcube™, the Level 1 library is used.
 \item A SQLite in-memory database is used for editing the wallet.
 \item A secureSQLite encrypted data base is used for storing the wallet in disk.
 \item The application includes a password and a passphrase generator with several configuration options.
@@ -93,7 +94,7 @@ When the user starts the application, the first window to appear is the Login Di
  \label{fig:login}
 \end{figure}
 
-The authentication process begins with the discovery of SEcube™ devices connected to the PC. This is achieved using Level0 APIs as seen in the listing \ref{lis:dis}. Each discovered device is added to the \texttt{QComboBox} displayed in the login dialogue and to a \texttt{QList}.
+The authentication process begins with the discovery of SEcube™ devices connected to the PC. This is achieved using Level 0 APIs as seen in the listing \ref{lis:dis}. Each discovered device is added to the \texttt{QComboBox} displayed in the login dialogue, and to a \texttt{QList}.
 
 \begin{lstlisting}[style=customc, float=htb, caption={Connected Devices discovery}, label = {lis:dis}]
 //// *** variables declaration ***
@@ -111,7 +112,7 @@ while((found = L0_discover_next(&it))){ //move to next device
 }
 \end{lstlisting}
 
-The user then selects one of the discovered devices using the \texttt{QComboBox}, enters their login pin and clicks accept. This triggers the listing \ref{lis:login}. The first step is to open the device communication using the Level0 function \texttt{L0\_open}. Then \texttt{L1\_login} starts the actual challenged based authentication using the login pin entered by the user. Using this type of authentication ensures the login pin is never communicated between the devices and stolen with a physical attack on the USB cable. Rather, a random number is generated in the host and transmitted to the device. The login pin is then used in both the host and the device to encrypt this random number using a \texttt{pbkdf2} function. The resulting key on the device is sent to the host, who compares it with its own key. If they are the same it means the login pin entered by the user is equal to the login pin stored in the device, and the only information transmitted are random numbers that an attacker cannot understand. (The actual authentication procedure implemented is a little bit more complex, but is based on the same idea described here).
+The user then selects one of the discovered devices using the \texttt{QComboBox}, enters their login pin and clicks accept. This triggers the listing \ref{lis:login}. The first step is to open the device communication using the Level 0 function \texttt{L0\_open}. Then \texttt{L1\_login} starts the actual challenged based authentication using the login pin entered by the user. Using this type of authentication ensures the login pin is never communicated between the devices and is never stolen with a physical attack on the USB cable. Rather, a random number is generated in the host and transmitted to the device. The login pin is then used in both the host and the device to encrypt this random number using a \texttt{pbkdf2} function. The resulting key on the device is sent to the host, who compares it with its just generated key. If they are the same it means the login pin entered by the user is equal to the login pin stored in the device, and the only information transmitted are random numbers that an attacker cannot understand. (The actual authentication procedure implemented is a little bit more complex, but is based on the same idea described here).
 %TODO
 \todo{explain better the challenge based}
 
@@ -150,7 +151,7 @@ if (ret != SE3_OK){    //error at login
   accept();//All ok, go to main window
 \end{lstlisting}
 
-After both device and host have the same key, it is used to encrypt the communication channel. A token is generated in the device and transmitted on the encrypted channel to the host. This token is a random number, and is used from that point on to validate any communication between host and device. The SEcube™ Chip does not accept any command from the host if the token it sends is not the correct one. The only command accepted without a token is off course, login. In the logout procedure, this token is cleared (set to zeros), so a login later on is possible.
+After the same key is shared by both the device and the host, it is used to encrypt the communication channel. A token is generated in the device and transmitted on the encrypted channel to the host. This token is a random number, and is used from that point on to validate any communication between host and device. The SEcube™ Chip does not accept any command from the host if the token it sends is not the correct one. The only command accepted without a token is off course, login. In the logout procedure, this token is cleared (set to zeros), so a login later on is possible.
 
 One problem found during the development of the application is the following: If after login in, the SEcubeWallet application crashes, the logout command, that is usually issued when closing, is never executed, and the device remains with an active token value. Therefore, when the user launches the application again, the login will fail, because the device expects a token value from the host. To solve this issue a few options were considered:
 
@@ -158,7 +159,7 @@ One problem found during the development of the application is the following: If
 \setlength\itemsep{-3pt}
 
 \item Make sure the application never crashes. Because software applications are rarely completely bug-free, and even if they are, an external problem like a bug in the OS can make them crash, this option is not feasible. 
-\item Make sure the logout command is issued even in the case the application crashes. This option sounded promising, and a two-process idea was even developed. Process 1 is only in charge of calling Process 2, in which the actual application was executed. if Process 2 crashes, Process 1 remains alive and performs the logout procedure. To make this work, shared memory was used to communicate the session variable (were the token is stored), so both processes could send commands to the device. The idea was latter on dropped because of two main reasons: First of all, it did not solve the case were the problem is external (OS bug), secondly, it was too complicated because of the sharing memory mechanism (The session variable is a fairly complex structure, with a lot of pointers), and because the token was being shared by two processes, this could open another possibility of attacks.
+\item Make sure the logout command is issued even in the case the application crashes. This option sounded promising, and a two-process idea was even developed. Process 1 is only in charge of calling Process 2, in which the actual application is executed. if Process 2 crashes, Process 1 remains alive and performs the logout procedure. To make this work, shared memory was used to communicate the session variable (were the token is stored), so both processes could send commands to the device. The idea was latter on dropped because of two main reasons: First of all, it did not solve the case were the problem is external (OS bug), secondly, it was too complicated because of the sharing memory mechanism (The session variable is a fairly complex structure, with a lot of pointers), and because the token was being shared by two processes, this could open another possibility of attacks.
 \item As the two previous ideas failed, it was decided that a small modification to the login behaviour on the SEcube™ firmware was necessary. The modification consist on letting the login function clear the token field if necessary. This does not compromise the security of the system because access to the chip is only granted if the login pin entered by the user is the right one. One concern that may rise is that, while an application is using the SEcube™, another one could close the session by issuing a Login command, but this is not possible because the \texttt{L0\_open} function only allows one process to communicate with the chip at a time, using a file locker in the .se3magic
 file saved in the SEcube™ SDcard.
 \end{itemize} 
@@ -166,7 +167,7 @@ file saved in the SEcube™ SDcard.
 The new behaviour is implemented in listings \ref{lis:se3cmd1}.
 If after a crash the session in the SEcube™ remains open, and the host tries to login again, the SEcube™ returns the new error code \texttt{SE3\_ERR\_OPENED}. The host then can decide if it wants to force the SEcube™ to close the opened session so it can login, with the new command \texttt{SE3\_CMD1\_LOGOUT\_FORCED}, which forces a logout without checking the token. After this command the host can login as usual. This steps are included in the host side \texttt{L1\_login} function, which now has an additional parameter to control whether to force a logout or not. This parameter is the one used in listings \ref{lis:login}, set to true when the user clicks \textsc{yes} in the confirmation dialogue asking whether or not to close the previous session.
 
-\begin{lstlisting}[style=customc, float=htb, caption={Modification in SEcubeFirmware, file se3\_cmd1.c}, label = {lis:se3cmd1}]
+\begin{lstlisting}[style=customc, float=htb, caption={Modification in SEcube™ Firmware, file se3\_cmd1.c}, label = {lis:se3cmd1}]
 if (se3c1.login.y) { // if there is already an opened session
   if (memcmp(se3c1.login.token, req_params.token, SE3_L1_TOKEN_SIZE)) { //and token mismatch
     if (req_params.cmd==SE3_CMD1_CHALLENGE)//someone (maybe same user after a crash) trying to login.
@@ -202,11 +203,12 @@ The main window is composed of the following elements:
 \item \textbf{Table View:} Used for displaying the wallet entries. It resizes smoothly with the window, can be ordered by any of the columns, and the passwords are hidden by default but can be shown if the user wants to.
 \item \textbf{Filters:} The user can search in each of the table's columns using filters. These filters are implemented inside a separate container, but they resize together with the table.
 \item \textbf{Entries Tool Bar:} It is positioned to the left of the table. It has the actions: add/edit/delete entries, show passwords, fit table, change date filter, launch domain and select table.
-\item \textbf{Tables Tool Bar:} It is positioned to the top right of the table. It has the actions: add/rename/delete table.
+\item \textbf{Tables Tool Bar:} It is positioned in the top right of the table. It has the actions: add/rename/delete table.
 \item \textbf{Wallets Tool Bar:} It is positioned to the top left of the table. It has the actions: new/open/delete/save/save as/close Wallet. 
+
 All of the above Tool Bars are movable.
 \item \textbf{Menu Bar:} It is positioned at the top of the window. It contains all the previous actions, plus preferences and help.
-\item \textbf{Status Bar:} Positioned at the bottom of the window, it is used to display some success/error messages to the user and the current wallet name.
+\item \textbf{Status Bar:} Positioned at the bottom of the window, it is used to display some success/error messages to the user, and the current wallet name.
 \end{itemize}
 
 \subsection{Wallet actions}
@@ -263,7 +265,7 @@ To write the wallet contents to the disk, it is necessary to have a filename, so
  \label{fig:saveWallet}
 \end{figure}
 
-The need for two dialogues instead of a regular file browser comes from the fact that the chosen filename will not be readable from the OS, since \texttt{SEfile} also encrypts it. Similarly, wallets already saved in the directory cannot be displayed with a regular file browser, so it is necessary to use the \texttt{SEfile} function \texttt{secure\_ls} and display its output in the list seen in figure \ref{fig:saveWalleta}. The declaration of this function is in listings \ref{lis:securels}. To chose the working directory, it is enough to use the \texttt{QFileDialog} class. If the user wishes they chose an existing filename and can overwrite the correspondent wallet.
+The need for two dialogues instead of a regular file browser comes from the fact that the chosen filename will not be readable from the OS, since \texttt{SEfile} also encrypts it. Similarly, wallets already saved in the directory cannot be displayed with a regular file browser, so it is necessary to use the \texttt{SEfile} function \texttt{secure\_ls} and display its output in the list seen in figure \ref{fig:saveWalleta}. The declaration of this function is in listings \ref{lis:securels}. To chose the working directory, it is enough to use the \texttt{QFileDialog} class. If the user wishes they can overwrite an existent wallet.
 
 \begin{lstlisting}[style=customc, float=htb, caption={secure\_ls declaration}, label = {lis:securels}]
  /* This function identifies which encrypted files and encrypted directories are present in the directory pointed by path and writes them in list. It only recognizes the ones encrypted with the current environmental parameters.*/
@@ -276,7 +278,7 @@ uint16_t secure_ls(    //returns 0 in case of success
 \end{lstlisting}
 
 
-After having a filename the next step is to read all of the tables in the current in-memory database, row by row. For each row a \texttt{SQLite} statement of the form \texttt{INSERT INTO table VALUES(user, dom, pass, date, desc)} is created. All of them are merge into a single statement which is executed into the secured in-disk database. This ensures only one access to the SEcube™ and disk. This process is somewhat slow and the GUI is disabled while it is performed. A simplified version of the code is shown in listing \ref{lis:save} 
+After having a filename the next step is to read all of the tables in the current in-memory database, row by row. Then, for each row a \texttt{SQLite} statement of the form \texttt{INSERT INTO table VALUES(user, dom, pass, date, desc)} is created. All of them are merged into a single statement which is executed into the secured in-disk database. This ensures only one access to the SEcube™ and disk. This process is somewhat slow and the GUI is disabled while it is performed. A simplified version of the code is shown in listing \ref{lis:save} 
 
 \begin{lstlisting}[style=customc, float=htb, caption={simplified Save process}, label = {lis:save}, escapechar=¬]
 sqlite3 *dbSec;    //Secure database declaration, in header
@@ -320,7 +322,7 @@ foreach (const QString table, tables) { // loop all the tables
 sqlite3_exec(dbSec, finalSql.toUtf8(), NULL, 0, &zErrMsg);
 \end{lstlisting}
 
-One problem found during the open process of a secured in-disk wallet is that the first table is always corrupt and gives the error: \texttt{database disk image is malformed}. The error only occurs when using the SEcube™ version of the SQLite library. Because it was impossible to find the origin of the error, it was decided to use a workaround: In the save wallet process, an empty table is inserted at the beginning of the in disk database (see line \ref{line:empty} in listings \ref{lis:save}). When opening the wallets, the empty table is simply ignored. With this, the real tables are always correctly read an the application works as intended.
+One problem found during the open process of a secured in-disk wallet is that the first table is always corrupt and gives the error: \texttt{database disk image is malformed}. The error only occurs when using the SEcube™ version of the SQLite library. Because it was impossible to find the origin of the error, it was decided to use a workaround: In the save wallet process, an empty table is inserted at the beginning of the in disk database (see line \ref{line:empty} in listings \ref{lis:save}). When opening a wallet, the empty table is simply ignored. With this, the real tables are always correctly read an the application works as intended.
 
 
 \subsubsection*{Save Wallet As action}
@@ -504,7 +506,7 @@ query.exec();
 
 \subsubsection*{Select Table}
 
-To allow the user to select one table to display out of the existent ones in the current Wallet, a \texttt{QComboBox} is added to the Entries Tool Bar. Each time a Wallet is opened/closed, or a table is added/renamed/deleted, the items in the QComboBox are updated accordingly. When the selected item in the QComboBox changes, the tableView update procedure explained in the following section is triggered.
+To allow the user to select one table to display out of the existent ones in the current Wallet, a \texttt{QComboBox} is added to the Entries Tool Bar. Each time a Wallet is opened/closed, or a table is added/renamed/deleted, the items in the \texttt{QComboBox} are updated accordingly. When the selected item in the \texttt{QComboBox} changes, the \texttt{tableView} update procedure explained in the following section is triggered.
 
 \subsubsection*{Table display}
 To display the entries in each of the Wallet tables, a \textbf{Model/View} architecture was followed. From the official Qt documentation \cite{modelview}:
@@ -573,12 +575,12 @@ In the SEcubeWallet application these elements correspond to:
 
 \item \textbf{Data:} The data coming from the database. As we are displaying only one table at a time, the data actually corresponds to a single table.
 \item \textbf{Model}: \texttt{QSqlTableModel}, a Qt class which provides an editable data model for a single database table.
-\item \textbf{Proxy Model}: \texttt{MySortFilterProxyModel}, a class written by the author inheriting from the Qt \texttt{QSortFilterProxyModel} class. It implements custom filtering for each of the columns, in particular for the date.
-\item \textbf{View}: \texttt{MyQTableView}, a class written by the author inheriting from the Qt \texttt{QTableView} class. \texttt{MyQTableView} reimplements the \texttt{resizeEvent} to make sure the user has the best GUI experience. This new class allows for manual resizing of each column as well as automatic resizing when the widow size changes. Also, there is a button that allows the user to fit the table in the available space by giving all the columns the same width.
-\item \textbf{Delegate}: \texttt{PasswordItemDelegate}, a class written by the author inheriting from the Qt \texttt{QStyledItemDelegate} class. It is used to implement the show/hide password functionality.
+\item \textbf{Proxy Model}: \texttt{MySortFilterProxyModel}, a class written by the author inheriting from the \texttt{QSortFilterProxyModel} class. It implements custom filtering for each of the columns, in particular for the date.
+\item \textbf{View}: \texttt{MyQTableView}, a class written by the author inheriting from the \texttt{QTableView} class. \texttt{MyQTableView} reimplements the \texttt{resizeEvent} to make sure the user has the best GUI experience. This new class allows for manual resizing of each column as well as automatic resizing when the widow size changes. Also, there is a button that allows the user to fit the table in the available space by giving all the columns the same width.
+\item \textbf{Delegate}: \texttt{PasswordItemDelegate}, a class written by the author inheriting from the \texttt{QStyledItemDelegate} class. It is used to implement the show/hide password functionality.
 \end{itemize}
 
-There is one element not mentioned in the model/View architecture: the \textbf{Proxy Model}. It will be explained in details in the filters section. The \textbf{delegate} will be explained in the Show Password section.
+In the previous list there is one element not mentioned in the model/View architecture: the \textbf{Proxy Model}. It will be explained in details in the filters section. The \textbf{delegate} will be explained in the Show Password section.
 
 In listing \ref{lis:modelview} the model view architecture is implemented. Model, Proxy Model and Delegate are interconnected among them, with the database table and with the GUI's table view. Additionally some display tweaks are made, for instance the ID column, vertical header and passwords are hidden.
 
@@ -635,7 +637,7 @@ void MainWindow::on_action_Show_Passwords_toggled(bool show){
 \subsubsection*{Filters}
 The filters implementation comprise two classes. The first one is related to the GUI, and its job is to align each of the filters with its corresponding table column. The second class is related to the data filtering per se.
 
-The \textbf{filters alignment} is based on the \texttt{ColumnAlignedLayout} class by sashoalm \cite{aligned}. This class is a Layout that inherits from the \texttt{QHBoxLayout} Qt class. It reimplements the \texttt{setGeometry} method to reposition each of the elements in the layout to follow the correspondent column in the tableView that is being tracked. This implementation allows to add any type of widget to the layout, as long as the number of widgets equals the number of tracked columns. The class definition is shown in listing \ref{lis:aligned}.
+The \textbf{filters alignment} is based on the \texttt{ColumnAlignedLayout} class by sashoalm \cite{aligned}. This class is a Layout that inherits from the \texttt{QHBoxLayout} class. It reimplements the \texttt{setGeometry} method to reposition each of the elements in the layout to follow the correspondent column in the tableView that is being tracked. This implementation allows to add any type of widget to the layout, as long as the number of widgets equals the number of tracked columns. The class definition is shown in listing \ref{lis:aligned}.
 
 \begin{lstlisting}[style=customc, float=htb, caption={Aligned Filters definition}, label = {lis:aligned}]
 // *** filtersaligned.cpp ***
@@ -769,7 +771,7 @@ This subwindow is composed of:
 \begin{itemize}
 \setlength\itemsep{-3pt}
 
-\item \textbf{Text input elements: }To enter the Username, Domain, Description and Password, five \texttt{QLineEdit} are used. The password needs to be entered twice to make sure is the desired one, and if it is not the same in both text fields, an error message is displayed. The date is not entered by the user, but generated automatically based on the system clock.
+\item \textbf{Text input elements: }To enter the Username, Domain, Description and Password, five \texttt{QLineEdit} are used. The password needs to be entered twice to make sure it is the desired one, and if it is not the same in both text fields, an error message is displayed. The date is not entered by the user, but generated automatically based on the system clock.
 \item \textbf{Show password checkBox: }By changing the echo mode in the password \texttt{QLineEdit}, it can be hidden or shown. It is hidden by default
 \item \textbf{Password Generator Button: }This triggers one of two available generators: PwGen or PassPhraseGen. These are explained in detail in sections \ref{sec:pwgen} and \ref{sec:ppgen}
 \item \textbf{l33t buttons: }To increase the password strength the user can translate it to l33t. If they are not happy with the result, a button to reverse the action is also present. The l33t implementation is explained in section \ref{sec:l33t}
@@ -817,7 +819,7 @@ In this section, a set of miscellaneous functionalities are explained.
 
 \subsubsection*{Launch Domain action}
 
-Using the Qt function \texttt{QDesktopServices::openUrl(QUrl(domain))}, it is straight forward to open the domain of the entry selected by the user. It will be opened in the default web browser configured in the OS. The only detail to play attention is the format. If the domain entered by the user does not start with \texttt{http://} or \texttt{https://}, then \texttt{http://} is prepended. Also, if the entered domain does not contain any dots apart from the one in \texttt{www.}, then the most common top-level domain, \texttt{.com} is added. This will not work in all the cases, but should help fixing some of the domains when the user forgets to type the TLD.
+Using the Qt function \texttt{QDesktopServices::openUrl(QUrl(domain))}, it is straight forward to open the domain of the entry selected by the user. It will be opened in the default web browser configured in the OS. The only detail to play attention is the format. If the domain entered by the user does not start with \texttt{http://} or \texttt{https://}, then \texttt{http://} is prepended. Also, if the entered domain does not contain any dots apart from the one in \texttt{www.}, then the most common top-level domain, \texttt{.com} is added. This will not work in all the cases, but should help fixing some of the domains when the user forgets to type the \texttt{TLD}.
 
 
 \subsubsection*{Status Bar}
@@ -1006,7 +1008,7 @@ Besides source files, zxcvbn also needs to compile the dictionary files, but fir
 
 \subsubsection*{General dictionaries}
 
-Dictionaries are a crucial part of the algorithm, because they are used estimate the security level of a password according to how common the used words (if any) are. A password containing words present in any of the dictionaries will be easier to crack as hackers will probably try out those specific words or a combination of them.
+Dictionaries are a crucial part of the algorithm, because they are used to estimate the security level of a password according to how common the used words (if any) are. A password containing words present in any of the dictionaries will be easier to crack as hackers will probably try out those specific words or a combination of them.
 
 General dictionaries contain a large number of words that are useful for all users. Examples of these type of dictionaries (included in this work) are:
 \begin{itemize}
@@ -1028,7 +1030,7 @@ To add their own dictionaries, the users need to make sure they are saved as pla
 
 \subsubsection*{Static Library vs Shared Library}
 
-Because the dictionaries are transformed into a source file and then compiled together with the main program, it is not possible to add, remove or modify dictionary files after the sources are compiled. Therefore the zxcvbn library can not be embedded into the SEcubeWallet application as a static library (or using the C sources directly), but rather, a \textbf{shared library} approach was followed, which allows the dynamic unload/update/load of the library. This has some performance penalties over static libraries, but it is the only way to give the users the possibility of customize the dictionaries as they please.
+Because the dictionaries are transformed into a source file and then compiled together with the main program, it is not possible to add, remove or modify dictionary files after the sources are compiled. Therefore the zxcvbn library can not be embedded into the SEcubeWallet application as a static library (or using the C sources directly), but rather, a \textbf{shared library} approach must be followed, which allows the dynamic unload/update/load of the library. This has some performance penalties over static libraries, but it is the only way to give the users the possibility of customize the dictionaries as they please.
 
 \subsubsection*{Compilation process}
 
@@ -1037,7 +1039,7 @@ The steps performed by the \texttt{makefile} in order to compile the dictionarie
 \begin{enumerate}
 \setlength\itemsep{-3pt}
 
-\item Compile the source file \texttt{dict-generate.cpp} to obtain the dict generator executable\texttt{dictgen}.
+\item Compile the source file \texttt{dict-generate.cpp} to obtain the dict generator executable \texttt{dictgen}.
 \item Execute \texttt{dictgen} with the names of dictionaries to process as input argument. As a result the file \texttt{dict-src.h} is created.
 \item Compile the files \texttt{zxcvbn.c} and \texttt{zxcvbn.h} together with the just generated \texttt{dict-src.h}, using the gcc flag \texttt{-fPIC} so the resulting object file \texttt{zxcvbn-inline-pic.o} is suitable for library inclusion.
 \item Generate the shared library \texttt{libzxcvbn.so} from the object file. This is the library used by the SEcubeWallet sources.
@@ -1142,7 +1144,7 @@ Some interesting additional information can be obtained from \texttt{ZxcMatch\_t
 
 The \texttt{PassPhraseGen} C++ function implements the PassPhrase Generator. The function call is done from the \texttt{AddEntry} class, when the \texttt{Generate Password} button is clicked.
 
-\texttt{AddEntry} reads the configuration values stored as \texttt{QSettings}, asserts them and then makes the call. This values can be modified by the user in the preferences window, shown in figure \ref{fig:ppgenSett}. After the user selects the dictionaries and tunes the available options, they must click the apply button, which will trigger a line by line read of the dictionaries, to count the number of lines, that is the number of words available. This is necessary as it is not possible to know how many lines a file has without counting them, and the total number is required in order to generate properly bounded random numbers in the PassPhraseGen function.
+\texttt{AddEntry} reads the configuration values stored as \texttt{QSettings}, asserts them and then makes the call. This values can be modified by the user in the preferences window, shown in figure \ref{fig:ppgenSett}. After the user selects the dictionaries and tunes the available options, they must click the apply button, which will trigger a line by line read of the dictionaries, to count the number of lines, that is, the number of words available. This is necessary as it is not possible to know how many lines a file has without counting them, and the total number is required in order to generate properly bounded random numbers in the PassPhraseGen function.
 
 \begin{figure}[htb]
   \centering
@@ -1234,7 +1236,7 @@ m{6.5cm}cccr
 		\label{tab:ppgenExm}
 \end{table}
 
-The results in the table indicate the most important parameter is the number of words. Three words are enough to reach a zxcvbn level 4, which, as seen in previous sections, is very secure. A two word PassPhrase as long as \texttt{DrammaturgicoSbatacchiare} is not better than the shorter \texttt{ImmobileCwSites}, because the latter has one more word. The minimum word length also influences the PassPhrase entropy, but their effects are not as pronounced. Finally, working only with to the lower part of the dictionary may seem to not have any effect, but in reality its use is crucial: it ensures the generated PassPhrases do not contain any of the most common words, like \texttt{the} or \texttt{essere}. From the results on the table we can not appreciate this fact, but at least we learn the option does not do any harm either. (Although if the attacker finds out the user is generating PassPhrases using only the 30\% most uncommon words on a given language, their job would get easier).
+The results in the table indicate the most important parameter is the number of words. Three words are enough to reach a zxcvbn level 4, which, as seen in previous sections, is very secure. A two-word PassPhrase as long as \texttt{DrammaturgicoSbatacchiare} is not better than the shorter three-words \texttt{ImmobileCwSites}, because the latter has one more word. The minimum word length also influences the PassPhrase entropy, but their effects are not as pronounced. Finally, working only with to the lower part of the dictionary may seem to not have any effect, but in reality its use is crucial: it ensures the generated PassPhrases do not contain any of the most common words, like \texttt{the} or \texttt{essere}. From the results on the table we can not appreciate this fact, but at least we learn the option does not do any harm either. (Although if the attacker finds out the user is generating PassPhrases using only the 30\% most uncommon words on a given language, their job would get easier).
 
 
 \subsection{The FAT32 bug} \label{sec:fat32bug}
@@ -1253,7 +1255,7 @@ This file is known as a rollback journal and is used by the SQLite standard to a
 The rollback journal is usually created and destroyed at the start and end of a transaction, respectively. But there are exceptions to this rule.
 If a crash or power loss occurs in the middle of a transaction, then the rollback journal file is left on disk. The next time another application attempts to open the database file, it notices the presence of the abandoned rollback journal (we call it a "hot journal" in this circumstance) and uses the information in the journal to restore the database to its state prior to the start of the incomplete transaction.''
 
-The presence of the journal file hints at the problem being an interruption during the execution of \texttt{secureSQLite} write functions when working on a FAT32 system. A few test were performed to try to narrow down the error origin:
+The presence of the journal file hints at the problem being an interruption during the execution of \texttt{secureSQLite} write functions when working on a FAT32 system. A few test were performed to try to narrow down the error's origin:
 
 \begin{itemize}
 \setlength\itemsep{-3pt}
@@ -1263,7 +1265,7 @@ The presence of the journal file hints at the problem being an interruption duri
 \item The demo applications \texttt{SEfile\_IMG}  and \texttt{SEfile\_TXT} were also tested, and worked without any problems in FAT32 partitions. These applications do not use \texttt{secureSQLite}; they leverage directly the \texttt{SEfile} library, which is also used by the \texttt{secureSQLite} library, meaning the problem was not in \texttt{SEfile} but in \texttt{secureSQLite}. This was proved to be a wrong assumption later on.
 \end{itemize}
 
-With these points in mind, the bug was searched inside the \texttt{secureSQLite} library, but after several debug sessions, it was possible to trace the error origin to the \texttt{SEfile} library. Specifically, in the file \texttt{SEfile.c}, and function \texttt{secure\_seek}. Figure \ref{fig:traceback} shows the actual traceback, from the call to \texttt{sqlite3\_exec} in the \texttt{Save\_Wallet} action, all the way up to the \texttt{secure\_seek} function.
+With these points in mind, the bug was searched inside the \texttt{secureSQLite} library, but after several debug sessions, it was possible to trace the error's origin to the \texttt{SEfile} library. Specifically, in the file \texttt{SEfile.c}, and function \texttt{secure\_seek}. Figure \ref{fig:traceback} shows the actual traceback, from the call to \texttt{sqlite3\_exec} in the \texttt{Save\_Wallet} action, all the way up to the \texttt{secure\_seek} function.
 
 \begin{figure}[htb]
   \centering
@@ -1274,7 +1276,7 @@ With these points in mind, the bug was searched inside the \texttt{secureSQLite}
 \end{figure}
 
 The actual error is produced in the call to the OS function \texttt{lseek()} in line \ref{line:error} of listing \ref{lis:secseek}. 
-\begin{lstlisting}[style=customc, float=htb, caption={FAT32 Error origin at secure\_seek}, label = {lis:secseek}, escapechar=¬]
+\begin{lstlisting}[style=customc, float=htb, caption={FAT32 Error's origin at secure\_seek}, label = {lis:secseek}, escapechar=¬]
 /**This function is used to move correctly the file pointer.
  * [in]  hFile     The handle to the file to manipulate.
  * [in]  offset    Amount of character we want to move.
@@ -1328,7 +1330,7 @@ lseek() allows the file offset to be set beyond the end of the file
 location as measured in bytes from the beginning of the file.  On error, the value \texttt{(off\_t) -1} is returned and \texttt{errno} is set to indicate the error.''
 
 \vspace{7pt}
-\texttt{secure\_seek()} can be seen as a wrapper that uses the OS function \texttt{lseek()} to move the file pointer correctly, taking into account the way the \texttt{SEfile} library redefines a file, including the overhead added by sectors and headers that allow the data to be encrypted.
+\texttt{secure\_seek()} can be seen as a wrapper that uses the OS function \texttt{lseek()} to move the file pointer correctly, taking into account the way the \texttt{SEfile} library redefines a file, including the overhead added by sectors and headers that allow the data to be encrypted (see figure \ref{fig:secfile}).
 
 \vspace{7pt}       
 To better understand what was causing the error, the \texttt{return} and \texttt{errno} values for two save operations of the same database were compared. One into a FAT32 file system and the other into a ext4 system.
@@ -1337,10 +1339,10 @@ When the FAT32 system was used, the \texttt{return} value was indeed \texttt{(of
 
 ``\texttt{EINVAL}:  \texttt{whence} is not valid.  Or: the resulting file offset would be negative, or beyond the end of a seekable device.''
 
-When saving into an ext4 file system, the \texttt{return} value was \texttt{9844} and \texttt{errno} was equal to zero.
+When saving into an ext4 file system, the \texttt{return} value was \texttt{9844} (the expected one) and \texttt{errno} was equal to zero.
 
 \vspace{7pt}
-Figure \ref{fig:errordebug} shows this difference, and it is worth noticing that besides the file descriptor and pointers (always different for different executions), the rest of the variables have the same value
+Figure \ref{fig:errordebug} shows this difference, and it is worth noticing that besides the file descriptor and pointers (always different for different executions), the rest of the variables have the same value.
 \begin{figure}[ht]
   \centering
   \subfloat[FAT32 filesystem]{\includegraphics[width=0.48\textwidth]{chapters/figures/development/fat32debug.png}}
@@ -1352,7 +1354,7 @@ Figure \ref{fig:errordebug} shows this difference, and it is worth noticing that
 
 Going back to the \texttt{secure\_seek()} code in listing \ref{lis:secseek}, the line \ref{line:error} moves the file pointer to the last \texttt{LOGIC\_DATA} byte, because in order to keep the file consistency, its is required to write empty sectors starting from this position until the end of the file. To do so, starting from the end of the file (thus the argument \texttt{SEEK\_END}), the function moves the pointer backwards the number of empty bytes in the last sector.
 
-In order to move backwards, the \texttt{offset} argument of \texttt{lseek()} must be negative. In this case, the argument is equal to: 
+In order to move backwards, the \texttt{offset} argument of \texttt{lseek()} must be negative. In this case, it is equal to: 
 
 \lstset{style=customc}
 \lstinline"offset = (file_length%SEFILE_LOGIC_DATA)-SEFILE_SECTOR_SIZE"
@@ -1375,6 +1377,6 @@ To fix the error, a simple cast to \texttt{\textcolor{blue}{int32\_t}} for the \
 This kind of casting was actually found in other function calls in the \texttt{SEfile.c} file, so it made sense to use it in this situation too.
 
 \vspace{7pt}
-The reason the problem only affected FAT32 partitions is probably related to the fact that, as \texttt{lseek()} needs to move a file pointer, low-abstraction level functions need to be used, which are have different implementations for each type of file system. The ext4 low level functions were able to interpret the offset as negative whereas the FAT32 took it as positive.
+The reason the problem only affected FAT32 partitions is probably related to the fact that, as \texttt{lseek()} needs to move a file pointer, low-abstraction level functions need to be used, which have different implementations for each type of file system. The ext4 low level functions were able to interpret the offset as negative whereas the FAT32 took it as positive.
 
 Why the error only appears when using the \texttt{secureSQLite} library, and not in the demo applications \texttt{SEfile\_IMG} and \texttt{SEfile\_TXT} honestly remains a mystery. It may be  that the condition in line \ref{line:buffer} of listing \ref{lis:secseek} (\lstinline|if(buffer_size>0)|), that evaluates if the destination exceeds the end of file, is only met in rare occasions, and the way SQLite journaling works is one of them.
